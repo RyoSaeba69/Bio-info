@@ -1,3 +1,5 @@
+package erest;
+
 public class EFetch {
     private final String PUBMED_URL = "http://www.ncbi.nlm.nih.gov/pubmed/";
 
@@ -74,7 +76,7 @@ public class EFetch {
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("EFetch locus ID: " + locusId + " - gi: " + gi);
+        sb.append("erest.EFetch locus ID: " + locusId + " - gi: " + gi);
         sb.append("\n\t Title: " + title);
         sb.append("\n\t Pubmed: " + pubmed);
         sb.append("\n\t Organism: " + organism);

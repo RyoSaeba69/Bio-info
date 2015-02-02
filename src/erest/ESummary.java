@@ -1,3 +1,5 @@
+package erest;
+
 public class ESummary {
     private String id;
     private String title;
@@ -124,7 +126,7 @@ public class ESummary {
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("ESummary id: " + id);
+        sb.append("erest.ESummary id: " + id);
         sb.append("\n\t  Caption: " + caption);
         sb.append("\n\t  Title: " + title);
         sb.append("\n\t  Extra: " + extra);

@@ -1,3 +1,5 @@
+package erest;
+
 import java.io.IOException;
 
 import java.net.HttpURLConnection;
@@ -8,13 +10,10 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import java.io.UnsupportedEncodingException;
-
 import java.net.URL;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import java.util.Map;
@@ -40,7 +39,7 @@ public class EUtilClient {
     private static final String EUTIL_API_ESEARCH_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?";
     private static final String EUTIL_API_ESUMMARY_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?";
     private static final String EUTIL_API_EFETCH_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?";
-    private static final String CONST_PARAMETERS = "db=nuccore&retmode=xml&tool=adfeutils&email=fangx%40mskcc.org";
+    private static final String CONST_PARAMETERS = "db=nuccore&retmode=xml";//&tool=adfeutils&email=fangx%40mskcc.org";
 
 
     public EUtilClient() {
