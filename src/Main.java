@@ -7,7 +7,9 @@ public class Main {
             throws Exception
     {
         EUtilClient util = new EUtilClient();
+
         util.esearchGIByLocusID("Eukaryota");
+
         System.out.println(util.toString());
     }
 
