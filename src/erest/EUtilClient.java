@@ -1,29 +1,28 @@
 package erest;
 
-import java.io.IOException;
+import java.io.*;
 
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 import java.net.URL;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.sax.SAXSource;
 
+import bioutils.BioXMLUtils;
+import com.sun.deploy.util.StringUtils;
+import fetchclass.ESearchId;
 import org.w3c.dom.Document;
 
 import org.w3c.dom.Element;
@@ -32,122 +31,20 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 
 public class EUtilClient {
 
     private static final String EUTIL_API_ESEARCH_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?";
     private static final String EUTIL_API_ESUMMARY_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?";
+    private static final String EUTIL_API_ELINK_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?";
     private static final String EUTIL_API_EFETCH_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?";
-    private static final String CONST_PARAMETERS = "db=nuccore&retmode=xml";//&tool=adfeutils&email=fangx%40mskcc.org";
+    private static final String FETCH_PARAMETER = "db=nuccore&retmode=xml&rettype=gb";
+    private static final String CONST_PARAMETERS = "db=genome&retmode=xml";//&tool=adfeutils&email=fangx%40mskcc.org";
 
 
     public EUtilClient() {
-
-    }
-
-    public static void main(String[] args) {
-        EUtilClient util = new EUtilClient();
-        //util.getEFetchTestData();
-        util.getESummaryInBatchTest();
-    }
-
-    public void getESummaryInBatchTest() {
-        //esearchGIByLocusID,
-        //esummaryGIByLocusID
-        String[] locusIDs = { "NM_024212", "NM_024213" };
-
-        eFetchTitleByGiMap(esearchGIByLocusID(locusIDs));
-
-
-    }
-
-    public List<ESummary> getESummaryTestData() {
-        System.out.println("getESummaryTestData");
-        String locusID = "NM_024212";
-        String gi = esearchGIByLocusID(locusID);
-        return esummaryGIByLocusID(gi);
-    }
-
-    public void sendTest() {
-        System.out.println("sendTest");
-        String locusID = "NM_024212";
-        String gi = esearchGIByLocusID(locusID);
-        System.out.println("gi: " + gi);
-    }
-
-
-    public List<EFetch> getEFetchTestData() {
-        System.out.println("getEFetchTestData data");
-
-        String gi = "148747442";
-        return eFetchTitleByGi(gi);
-    }
-
-    public Map<String, List> eFetchTitleByGiMap(List giList) {
-
-        String term = "&id="; // + encode(gi);
-
-        if (giList.size() > 0) {
-            for (int i = 0; i < giList.size(); i++) {
-                if (giList.size() - 1 == i) {
-                    term = term + giList.get(i);
-                } else {
-                    term = term + giList.get(i) + ",";
-                }
-            }
-        }
-
-        String parameters = CONST_PARAMETERS + term;
-        String resturl = EUTIL_API_EFETCH_URL + parameters;
-        System.out.println("url: " + resturl);
-        Document doc = parseDOM(sendGet(resturl));
-
-        NodeList gbseqList = doc.getElementsByTagName("GBSeq");
-
-        Map mapOfGIToEFetchList = new HashMap();
-
-        for (int i = 0; i < gbseqList.getLength(); i++) {
-
-            Node gbseq = gbseqList.item(i);
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            DocumentBuilder builder = null;
-
-            try {
-                builder = factory.newDocumentBuilder();
-            } catch (ParserConfigurationException e) {
-                e.printStackTrace();
-            }
-
-            Document gbseqDoc = builder.newDocument();
-            Node importedNode = gbseqDoc.importNode(gbseq, true);
-            gbseqDoc.appendChild(importedNode);
-
-            NodeList referencesList = gbseqDoc.getElementsByTagName("GBReference");
-            String locusid = gbseqDoc.getElementsByTagName("GBSeq_locus").item(0).getTextContent();
-            String definition = gbseqDoc.getElementsByTagName("GBSeq_definition").item(0).getTextContent();
-            String organism = gbseqDoc.getElementsByTagName("GBSeq_source").item(0).getTextContent();
-            String giWhole = gbseqDoc.getElementsByTagName("GBSeqid").item(1).getTextContent();
-            String gi = giWhole.substring(3, giWhole.length());
-
-            List efetchList = new ArrayList();
-
-            for (int j = 0; j < referencesList.getLength(); j++) {
-                //GBReference_title
-                //GBReference_pubmed
-                Element ele = (Element) referencesList.item(i);
-                String title = ele.getElementsByTagName("GBReference_title").item(0).getTextContent();
-                String pubmed = ele.getElementsByTagName("GBReference_pubmed").item(0).getTextContent();
-
-                EFetch efetch = new EFetch(locusid, gi, title, pubmed, definition, organism);
-
-                efetchList.add(efetch);
-            }
-            mapOfGIToEFetchList.put(gi, efetchList);
-
-        }
-        return mapOfGIToEFetchList;
 
     }
 
@@ -308,88 +205,95 @@ public class EUtilClient {
             Element element = (Element) e.item(i);
             String attributeName = element.getAttribute("Name");
 
-            if(attributeName.equals("Caption")) {
+            if (attributeName.equals("Caption")) {
                 esummary.setCaption(element.getTextContent());
-            }
-
-            else if (attributeName.equals("Title")) {
+            } else if (attributeName.equals("Title")) {
                 esummary.setTitle(element.getTextContent());
-            }
-            else if (attributeName.equals("Extra")) {
+            } else if (attributeName.equals("Extra")) {
                 esummary.setExtra(element.getTextContent());
-            }
-            else if (attributeName.equals("Gi")) {
+            } else if (attributeName.equals("Gi")) {
                 esummary.setGi(element.getTextContent());
-            }
-            else if (attributeName.equals("CreateDate")) {
+            } else if (attributeName.equals("CreateDate")) {
                 esummary.setCreateDate(element.getTextContent());
-            }
-            else if (attributeName.equals("UpdateDate")) {
+            } else if (attributeName.equals("UpdateDate")) {
                 esummary.setUpdateDate(element.getTextContent());
-            }
-            else if (attributeName.equals("Flags")) {
+            } else if (attributeName.equals("Flags")) {
                 esummary.setFlags(element.getTextContent());
-            }
-            else if (attributeName.equals("TaxId")) {
+            } else if (attributeName.equals("TaxId")) {
                 esummary.setTaxId(element.getTextContent());
-            }
-            else if (attributeName.equals("Length")) {
+            } else if (attributeName.equals("Length")) {
                 esummary.setLength(element.getTextContent());
-            }
-            else if (attributeName.equals("Status")) {
+            } else if (attributeName.equals("Status")) {
                 esummary.setStatus(element.getTextContent());
-            }
-            else if (attributeName.equals("ReplacedBy")) {
+            } else if (attributeName.equals("ReplacedBy")) {
                 esummary.setReplacedBy(element.getTextContent());
-            }
-            else{
+            } else {
                 esummary.setComment(element.getTextContent());
             }
         }
 
     }
 
-
-    public String esearchGIByLocusID(String locusID) {
+    public String esearchId(String locusID, BioHashMap<String, String> options) {
+        String allOptions = options.toBioParameters();
 
         String term = "&term=" + locusID;
         String parameters = CONST_PARAMETERS + term;
-        String resturl = EUTIL_API_ESEARCH_URL + parameters;
+        String resturl = EUTIL_API_ESEARCH_URL + parameters + allOptions;
 
-        Document doc = parseDOM(sendGet(resturl));
-        NodeList nList = doc.getElementsByTagName("Id");
-        return nList.item(0).getTextContent();
+        return sendGet(resturl);
     }
 
-    public List esearchGIByLocusID(String[] locusIDArray) {
-        List giList = new ArrayList();
-        String term = "&term=";
+    public ArrayList<String> esearchAllId(String locusID, BioHashMap<String, String> options) {
+        ArrayList<String> allIds = new ArrayList<String>();
 
-        if (locusIDArray.length > 0) {
-
-            for (int i = 0; i < locusIDArray.length; i++) {
-                if (locusIDArray.length - 1 == i) {
-                    term = term + locusIDArray[i];
-                } else {
-                    term = term + locusIDArray[i] + ",";
-                }
-            }
+        if (!options.containsKey("retmax")) {
+            options.put("retmax", "10000");
         }
 
-        String parameters = CONST_PARAMETERS + term;
-        String resturl = EUTIL_API_ESEARCH_URL + parameters;
+        int retmax = Integer.parseInt(options.get("retmax"));
+        int retstart = 0;
+        int count = 0;
 
-        Document doc = parseDOM(sendGet(resturl));
-        NodeList nList = doc.getElementsByTagName("Id");
+        options.put("retstart", Integer.toString(retstart));
+        do {
+            String xmlResult = this.esearchId(locusID, options);
+            ESearchId esId = (ESearchId) BioXMLUtils.XMLToClass(xmlResult, ESearchId.class);
+            allIds.addAll(esId.getIds());
+            count = esId.getCount();
 
-        for (int i = 0; i < nList.getLength(); i++) {
-            String gi = nList.item(i).getTextContent();
-            System.out.println("gi: "+gi);
-            giList.add(gi);
-        }
-        return giList;
+            retstart++;
+            options.put("retstart", Integer.toString(retstart));
+
+        } while (((retstart) * retmax) < count);
+
+
+        return allIds;
     }
 
+    public String efetchSequence(BioHashMap<String, String> options) {
+        String allOptions = options.toBioParameters();
+        String parameters = FETCH_PARAMETER;
+        String resturl = EUTIL_API_EFETCH_URL + parameters + allOptions;
+
+        return sendGet(resturl);
+    }
+
+    public String efetchSeqById(String id) {
+        BioHashMap<String, String> options = new BioHashMap<String, String>();
+        options.put("id", id);
+        String parameters = FETCH_PARAMETER;
+        String resturl = EUTIL_API_EFETCH_URL + parameters + options.toBioParameters();
+        return sendGet(resturl);
+    }
+
+    public String efetchSeqByIds(ArrayList<String> ids){
+        BioHashMap<String, String> options = new BioHashMap<String, String>();
+        options.put("id", StringUtils.join(ids, ","));
+        String parameters = FETCH_PARAMETER;
+        String resturl = EUTIL_API_EFETCH_URL + parameters + options.toBioParameters();
+        return sendGet(resturl);
+    }
 
     public Document parseDOM(String xmlStr) {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
