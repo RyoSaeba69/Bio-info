@@ -11,27 +11,23 @@ import java.util.*;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.sax.SAXSource;
 
 import bioutils.BioXMLUtils;
 import com.sun.deploy.util.StringUtils;
 import fetchclass.ESearchId;
+import models.Genom;
+import models.Genoms;
 import org.w3c.dom.Document;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 
 
 public class EUtilClient {
@@ -292,7 +288,14 @@ public class EUtilClient {
         options.put("id", StringUtils.join(ids, ","));
         String parameters = FETCH_PARAMETER;
         String resturl = EUTIL_API_EFETCH_URL + parameters + options.toBioParameters();
+
         return sendGet(resturl);
+    }
+
+    public ArrayList<Genom> efetchGenomsByIds(ArrayList<String> ids){
+        String xmlResult = this.efetchSeqByIds(ids);
+        Genoms genoms = (Genoms) BioXMLUtils.XMLToClass(xmlResult, Genoms.class);
+        return genoms.getAllGenoms();
     }
 
     public Document parseDOM(String xmlStr) {
