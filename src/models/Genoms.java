@@ -1,10 +1,11 @@
 package models;
 
+import java.util.Vector;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
 
 /**
  * Created by antoine on 3/28/15.
@@ -15,16 +16,16 @@ import java.util.ArrayList;
 public class Genoms {
 
     @XmlElement(name="GBSeq")
-    private ArrayList<Genom> allGenoms;
+    private Vector<Genom> allGenoms;
 
     public Genoms() {
     }
 
-    public ArrayList<Genom> getAllGenoms() {
+    public Vector<Genom> getAllGenoms() {
         return allGenoms;
     }
 
-    public void setAllGenoms(ArrayList<Genom> allGenoms) {
+    public void setAllGenoms(Vector<Genom> allGenoms) {
         this.allGenoms = allGenoms;
     }
 }

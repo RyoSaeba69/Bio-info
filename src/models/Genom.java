@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Genom {
 
-    @XmlElement(name="GBSeq_taxonomy")
+	@XmlElement(name="GBSeq_taxonomy")
     private String taxonomy;
 
 //    @XmlElement(name="GBSeq_sequence")
@@ -39,15 +39,6 @@ public class Genom {
         this.taxonomy = taxonomy;
     }
 
-//    public String getSequence() {
-//        return sequence;
-//    }
-//
-//    public void setSequence(String sequence) {
-//        this.sequence = sequence;
-//    }
-
-
     public Sequence getSequence() {
         return sequence;
     }
@@ -63,4 +54,10 @@ public class Genom {
     public void setSequenceLength(int sequenceLength) {
         this.sequenceLength = sequenceLength;
     }
+    
+    @Override
+   	public String toString() {
+   		return "Genom [taxonomy=" + taxonomy + ", sequence=" + sequence
+   				+ ", sequenceLength=" + sequenceLength + "]";
+   	}
 }

@@ -7,6 +7,7 @@ import java.util.Map;
 /**
  * Created by antoine on 2/17/15.
  */
+@SuppressWarnings("serial")
 public class BioHashMap<K, V> extends HashMap<K, V> {
 
     public String toBioParameters() {

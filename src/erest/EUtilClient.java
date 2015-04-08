@@ -240,8 +240,8 @@ public class EUtilClient {
         return sendGet(resturl);
     }
 
-    public ArrayList<String> esearchAllId(String locusID, BioHashMap<String, String> options) {
-        ArrayList<String> allIds = new ArrayList<String>();
+    public Vector<String> esearchAllId(String locusID, BioHashMap<String, String> options) {
+        Vector<String> allIds = new Vector<String>();
 
         if (!options.containsKey("retmax")) {
             options.put("retmax", "10000");
@@ -283,7 +283,7 @@ public class EUtilClient {
         return sendGet(resturl);
     }
 
-    public String efetchSeqByIds(ArrayList<String> ids){
+    public String efetchSeqByIds(Vector<String> ids){
         BioHashMap<String, String> options = new BioHashMap<String, String>();
         options.put("id", StringUtils.join(ids, ","));
         String parameters = FETCH_PARAMETER;
@@ -292,7 +292,7 @@ public class EUtilClient {
         return sendGet(resturl);
     }
 
-    public ArrayList<Genom> efetchGenomsByIds(ArrayList<String> ids){
+    public Vector<Genom> efetchGenomsByIds(Vector<String> ids){
         String xmlResult = this.efetchSeqByIds(ids);
         Genoms genoms = (Genoms) BioXMLUtils.XMLToClass(xmlResult, Genoms.class);
         return genoms.getAllGenoms();
@@ -341,6 +341,7 @@ public class EUtilClient {
             while ((output = br.readLine()) != null) {
                 repsonse.append(output);
             }
+            br.close();
         } catch (IOException e) {
             System.out.println("IOException");
             e.printStackTrace();
