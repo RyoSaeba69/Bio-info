@@ -41,7 +41,6 @@ public class EUtilClient {
 
 
     public EUtilClient() {
-
     }
 
     public List<EFetch> eFetchTitleByGi(String gi) {
