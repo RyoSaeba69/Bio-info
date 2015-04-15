@@ -1,8 +1,8 @@
 package bioadapters;
 
-import models.Sequence;
-
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+
+import models.Sequence;
 
 /**
  * Created by antoine on 4/7/15.

@@ -1,33 +1,36 @@
 package erest;
 
-import java.io.*;
-
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-
 import java.net.URL;
-
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
-
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import bioutils.BioXMLUtils;
-import com.sun.deploy.util.StringUtils;
-import fetchclass.ESearchId;
 import models.Genom;
 import models.Genoms;
-import org.w3c.dom.Document;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import bioutils.BioXMLUtils;
+
+import com.sun.deploy.util.StringUtils;
+
+import fetchclass.ESearchId;
 
 
 public class EUtilClient {

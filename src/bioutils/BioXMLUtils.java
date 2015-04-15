@@ -1,14 +1,14 @@
 package bioutils;
 
-import fetchclass.ESearchId;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
+import java.io.StringReader;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
-import java.io.StringReader;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
 
 /**
  * Created by antoine on 3/28/15.
