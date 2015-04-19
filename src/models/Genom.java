@@ -4,6 +4,10 @@ import bioadapters.SequenceAdapter;
 
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.io.File;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.Vector;
 
 /**
  * Created by antoine on 2/17/15.
@@ -27,9 +31,7 @@ public class Genom {
     @XmlElement(name="GBSeq_length")
     private int sequenceLength;
 
-    public Genom() {
-
-    }
+    public Genom() {}
 
     public String getTaxonomy() {
         return taxonomy;
@@ -60,4 +62,19 @@ public class Genom {
    		return "Genom [taxonomy=" + taxonomy + ", sequence=" + sequence
    				+ ", sequenceLength=" + sequenceLength + "]";
    	}
+
+    public void createFiles(){
+        String taxonomySeparator = "; ";
+        String basePath = this.taxonomy.replaceAll(taxonomySeparator, File.pathSeparator);
+        File newDirectories = new File(basePath);
+        if(newDirectories.mkdirs()){
+            System.out.println("Directory successfully created : "+basePath);
+        } else {
+            System.out.println("Failed to create directory : "+basePath);
+        }
+
+    }
+
+
+
 }
