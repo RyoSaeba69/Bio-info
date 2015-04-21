@@ -31,7 +31,19 @@ public class Genom {
     @XmlElement(name="GBSeq_length")
     private int sequenceLength;
 
+    @XmlElementWrapper(name="GBSeq_feature-table")
+    @XmlElement(name="GBFeature")
+    private Vector<Feature> featureTable;
+
     public Genom() {}
+
+    public Vector<Feature> getFeatureTable() {
+        return featureTable;
+    }
+
+    public void setFeatureTable(Vector<Feature> featureTable) {
+        this.featureTable = featureTable;
+    }
 
     public String getTaxonomy() {
         return taxonomy;
@@ -72,7 +84,6 @@ public class Genom {
         } else {
             System.out.println("Failed to create directory : "+basePath);
         }
-
     }
 
 

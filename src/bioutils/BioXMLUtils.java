@@ -38,7 +38,8 @@ public final class BioXMLUtils {
 
             res = unmarshaller.unmarshal(source);
         } catch(Exception e){
-            e.printStackTrace();
+//            e.printStackTrace();
+            return null;
         }
 
         return res;
