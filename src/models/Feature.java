@@ -1,9 +1,7 @@
 package models;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -21,6 +19,10 @@ public class Feature {
 
     @XmlElement(name="GBFeature_location")
     private String location;
+
+    @XmlElementWrapper(name="GBFeature_intervals")
+    @XmlElement(name="GBInterval")
+    private Vector<GBInterval> intervals;
 
     public Feature() {
     }
@@ -41,25 +43,41 @@ public class Feature {
         this.location = location;
     }
 
+    public Vector<GBInterval> getIntervals() {
+        return intervals;
+    }
+
+    public void setIntervals(Vector<GBInterval> intervals) {
+        this.intervals = intervals;
+    }
+
     public boolean isCDS(){
         return this.key.equals(CDS_NAME);
     }
 
-    // TODO Implement
-    // return tab
-    public Vector<HashMap<String, String>> findIntervals(Sequence seq){
+    public boolean isUsableCds(){
 
-        if(!this.key.equals(CDS_NAME)){
-            // Don't handle other features
-            return null;
+        boolean isUsable = true;
+
+        Vector<String> strToRemove = new Vector<String>(Arrays.asList("complement", "join", "(", ")"));
+        String loc = this.getLocation();
+        for(String str : strToRemove){
+            loc.replace(str, "");
         }
+        String regexp = "^([0-9]+\\.\\.[0-9]+,)*[0-9]+\\.\\.[0-9]+$";
 
-
-        String strSeq = seq.getSequence();
-
-        return null;
-
-
+        if (loc.matches(regexp)) {
+            for(int i =0; i < this.intervals.size() && isUsable;i++){
+                GBInterval currentInter = this.intervals.get(i);
+                if(currentInter.getIntervalFrom() >= currentInter.getIntervalTo()){
+                    isUsable = false;
+                }
+            }
+        } else {
+            isUsable = false;
+        }
+        return loc.matches(regexp);
     }
+
 
 }
