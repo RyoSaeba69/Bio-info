@@ -39,9 +39,9 @@ public final class BioXMLUtils {
             res = unmarshaller.unmarshal(source);
         } catch(Exception e){
         	System.out.println("Une erreur est survenu lors du traitement du XML, veuillez avoir une connexion internet fiable.");
-            e.printStackTrace();
+//            e.printStackTrace();
+            return null;
         }
-        
         return res;
     }
 
