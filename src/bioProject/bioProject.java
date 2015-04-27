@@ -2,6 +2,8 @@ package bioProject;
 
 import java.util.Vector;
 
+import bioutils.BioStringUtil;
+import models.Sequence;
 import tasks.ThreadManager;
 
 public class bioProject {
@@ -13,7 +15,7 @@ public class bioProject {
 	
 	public static ThreadManager ThreadManager;
 	
-	public static void main(String[] args) {
+	public static void main(String[] args){
 		init();
 		initData();
 	}

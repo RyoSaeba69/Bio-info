@@ -1,27 +1,28 @@
 package tasks;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-import java.lang.management.ThreadMXBean;
-
-import models.Genom;
 import controllers.DataController;
 import erest.BioHashMap;
 import erest.EUtilClient;
+import models.Feature;
+import models.Genom;
+import models.Sequence;
+
+import java.util.HashMap;
+import java.util.Vector;
 
 public class GetDataThread extends Thread {
 
 	/**
-	 * Temps en miliseconde du temps d'attente entre deux exécutions
+	 * Temps en miliseconde du temps d'attente entre deux exï¿½cutions
 	 */
 	private long repeat;
 	/**
-	 * Nombre d'exécution avant l'arrêt de la tâche
+	 * Nombre d'exï¿½cution avant l'arrï¿½t de la tï¿½che
 	 */
 	private int nbExec;
 	
 	/**
-	 * Nom de l'élément à rechercher
+	 * Nom de l'ï¿½lï¿½ment ï¿½ rechercher
 	 */
 	private String researchName;
 	/**
@@ -40,9 +41,9 @@ public class GetDataThread extends Thread {
 	
 	/**
 	 * Constructeur du GetDataThread
-	 * @param repeat Nombre en miliseconde du temps d'attente entre deux exécutions du Thread
-	 * @param nbExec Nombre d'éxécution du Thread
-	 * @param researchName Nom de l'entité à rechercher
+	 * @param repeat Nombre en miliseconde du temps d'attente entre deux exï¿½cutions du Thread
+	 * @param nbExec Nombre d'ï¿½xï¿½cution du Thread
+	 * @param researchName Nom de l'entitï¿½ ï¿½ rechercher
 	 */
 	public GetDataThread(long repeat, int nbExec, String researchName) {
 		this.setRepeat(repeat);
@@ -56,9 +57,9 @@ public class GetDataThread extends Thread {
 	
 	/**
 	 * Constructeur du GetDataThread
-	 * @param repeat Nombre en miliseconde du temps d'attente entre deux exécutions du Thread
-	 * @param nbExec Nombre d'éxécution du Thread
-	 * @param researchName Nom de l'entité à rechercher
+	 * @param repeat Nombre en miliseconde du temps d'attente entre deux exï¿½cutions du Thread
+	 * @param nbExec Nombre d'ï¿½xï¿½cution du Thread
+	 * @param researchName Nom de l'entitï¿½ ï¿½ rechercher
 	 * @param opts Liste des options de la recherche
 	 */
 	public GetDataThread(long repeat, int nbExec, String researchName, BioHashMap<String, String> opts) {
@@ -73,8 +74,8 @@ public class GetDataThread extends Thread {
 	
 	/**
 	 * Constructeur du GetDataThread
-	 * @param nbExec Nombre d'éxécution du Thread
-	 * @param researchName Nom de l'entité à rechercher
+	 * @param nbExec Nombre d'ï¿½xï¿½cution du Thread
+	 * @param researchName Nom de l'entitï¿½ ï¿½ rechercher
 	 */
 	public GetDataThread(int nbExec, String researchName) {
 		this.setNbExec(nbExec);
@@ -87,8 +88,8 @@ public class GetDataThread extends Thread {
 	
 	/**
 	 * Constructeur du GetDataThread
-	 * @param nbExec Nombre d'éxécution du Thread
-	 * @param researchName Nom de l'entité à rechercher
+	 * @param nbExec Nombre d'ï¿½xï¿½cution du Thread
+	 * @param researchName Nom de l'entitï¿½ ï¿½ rechercher
 	 * @param opts Liste des options de la recherche
 	 */
 	public GetDataThread(int nbExec, String researchName, BioHashMap<String, String> opts) {
@@ -102,29 +103,16 @@ public class GetDataThread extends Thread {
 	
 	@Override
 	public void run() {
-		System.out.println("DEBUT RUN GetDataThread");
-		
-		RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
-		 
-		String jvmName = runtimeBean.getName();
-		System.out.println("JVM Name = " + jvmName);
-		long pid = Long.valueOf(jvmName.split("@")[0]);
-		System.out.println("JVM PID  = " + pid);
- 
-		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
- 
-		int peakThreadCount = bean.getPeakThreadCount();
-		System.out.println("Peak Thread Count = " + peakThreadCount);
-		
 		for(int i = 0; nbExec < 0 || i < nbExec; i++) {
 			dataController.setAllIds(this.getUtilClient().esearchAllId(this.getResearchName(), this.getOpts()));
 			dataController.setSeqRes(this.getUtilClient().efetchGenomsByIds(dataController.getAllIds()));
-			for(Genom gTemp : dataController.getSeqRes()) {
-				System.out.println("TRACE : "+ gTemp.toString());
+
+			for(Genom genom : dataController.getSeqRes()){
+				genom.generateStats();
 			}
+
 			System.out.println("Test Sequences : " + dataController.getSeqRes().toString());
 		}
-		System.out.println("FIN RUN GetDataThread");
 	}
 
 	public long getRepeat() {
