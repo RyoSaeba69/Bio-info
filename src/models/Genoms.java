@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Genoms {
 
-    @XmlElement(name="GBSeq")
+	@XmlElement(name="GBSeq")
     private Vector<Genom> allGenoms;
 
     public Genoms() {
@@ -28,4 +28,9 @@ public class Genoms {
     public void setAllGenoms(Vector<Genom> allGenoms) {
         this.allGenoms = allGenoms;
     }
+    
+    @Override
+	public String toString() {
+		return "Genoms [allGenoms=" + allGenoms + "]";
+	}
 }

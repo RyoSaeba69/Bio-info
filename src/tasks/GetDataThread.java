@@ -1,5 +1,10 @@
 package tasks;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.lang.management.ThreadMXBean;
+
+import models.Genom;
 import controllers.DataController;
 import erest.BioHashMap;
 import erest.EUtilClient;
@@ -97,11 +102,29 @@ public class GetDataThread extends Thread {
 	
 	@Override
 	public void run() {
+		System.out.println("DEBUT RUN GetDataThread");
+		
+		RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
+		 
+		String jvmName = runtimeBean.getName();
+		System.out.println("JVM Name = " + jvmName);
+		long pid = Long.valueOf(jvmName.split("@")[0]);
+		System.out.println("JVM PID  = " + pid);
+ 
+		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+ 
+		int peakThreadCount = bean.getPeakThreadCount();
+		System.out.println("Peak Thread Count = " + peakThreadCount);
+		
 		for(int i = 0; nbExec < 0 || i < nbExec; i++) {
 			dataController.setAllIds(this.getUtilClient().esearchAllId(this.getResearchName(), this.getOpts()));
 			dataController.setSeqRes(this.getUtilClient().efetchGenomsByIds(dataController.getAllIds()));
+			for(Genom gTemp : dataController.getSeqRes()) {
+				System.out.println("TRACE : "+ gTemp.toString());
+			}
 			System.out.println("Test Sequences : " + dataController.getSeqRes().toString());
 		}
+		System.out.println("FIN RUN GetDataThread");
 	}
 
 	public long getRepeat() {

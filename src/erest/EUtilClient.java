@@ -26,10 +26,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import bioutils.BioXMLUtils;
-
 import com.sun.deploy.util.StringUtils;
 
+import bioutils.BioXMLUtils;
 import fetchclass.ESearchId;
 
 
@@ -295,8 +294,14 @@ public class EUtilClient {
     }
 
     public Vector<Genom> efetchGenomsByIds(Vector<String> ids){
-        String xmlResult = this.efetchSeqByIds(ids);
-        Genoms genoms = (Genoms) BioXMLUtils.XMLToClass(xmlResult, Genoms.class);
+    	Genoms genoms = new Genoms();
+    	try {
+    		String xmlResult = this.efetchSeqByIds(ids);
+    		genoms = (Genoms) BioXMLUtils.XMLToClass(xmlResult, Genoms.class);
+    	} catch(Exception e) {
+    		System.out.println("error : " + e);
+    		e.printStackTrace();
+    	}
         return genoms.getAllGenoms();
     }
 
@@ -350,7 +355,7 @@ public class EUtilClient {
         } finally {
             connection.disconnect();
         }
-        System.out.println("repsonse.toString(): " + repsonse.toString());
+        //System.out.println("repsonse.toString(): " + repsonse.toString());
         return repsonse.toString();
     }
 

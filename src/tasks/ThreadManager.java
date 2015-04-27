@@ -35,8 +35,11 @@ public class ThreadManager {
 	 */
 	public void startAllTasks() {
 		for(GetDataThread tTemp : this.getAllTasks()) {
+			System.out.println("Lancement Thread n°" + tTemp.getId() + " nameSearch :" + tTemp.getResearchName());
 			tTemp.start();
 		}
+		
+		System.out.println("Fin de lancement des Threads");
 	}
 	
 	public Vector<GetDataThread> getAllTasks() {
