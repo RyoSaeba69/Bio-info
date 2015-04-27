@@ -286,7 +286,7 @@ public class EUtilClient {
 
     public String efetchSeqByIds(Vector<String> ids){
         BioHashMap<String, String> options = new BioHashMap<String, String>();
-        options.put("id", StringUtils.join(ids, ","));
+        options.put("id", StringUtils.join(ids.subList(0, 1000), ","));
         String parameters = FETCH_PARAMETER;
         String resturl = EUTIL_API_EFETCH_URL + parameters + options.toBioParameters();
 
