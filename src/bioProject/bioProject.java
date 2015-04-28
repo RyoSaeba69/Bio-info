@@ -1,9 +1,9 @@
 package bioProject;
 
+import ihm.MainFenetre;
+
 import java.util.Vector;
 
-import bioutils.BioStringUtil;
-import models.Sequence;
 import tasks.ThreadManager;
 
 public class bioProject {
@@ -17,6 +17,7 @@ public class bioProject {
 	
 	public static void main(String[] args){
 		init();
+		MainFenetre ihm = new MainFenetre();
 		initData();
 	}
 	

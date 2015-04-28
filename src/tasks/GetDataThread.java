@@ -1,5 +1,7 @@
 package tasks;
 
+import ihm.ProgressBarPanel;
+
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadMXBean;
@@ -103,6 +105,8 @@ public class GetDataThread extends Thread {
 	@Override
 	public void run() {
 		System.out.println("DEBUT RUN GetDataThread");
+		//Test
+		ProgressBarPanel.setProgressBarValue(1);
 		
 		RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
 		 
@@ -117,9 +121,14 @@ public class GetDataThread extends Thread {
 		System.out.println("Peak Thread Count = " + peakThreadCount);
 		
 		for(int i = 0; nbExec < 0 || i < nbExec; i++) {
+			System.out.println("Recuperation des donnees, veuillez patienter...");
 			dataController.setAllIds(this.getUtilClient().esearchAllId(this.getResearchName(), this.getOpts()));
 			dataController.setSeqRes(this.getUtilClient().efetchGenomsByIds(dataController.getAllIds()));
+			
+			ProgressBarPanel.setMaximumProgressBar(dataController.getSeqRes().size());
+			int nbr = 1;
 			for(Genom gTemp : dataController.getSeqRes()) {
+				ProgressBarPanel.setProgressBarValue(nbr);nbr++;
 				System.out.println("TRACE : "+ gTemp.toString());
 			}
 			System.out.println("Test Sequences : " + dataController.getSeqRes().toString());
