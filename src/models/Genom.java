@@ -246,7 +246,8 @@ public class Genom {
         return resStats;
     }
 
-    public static void genExcelFile(GenStats gs, FileOutputStream excelFile) throws Exception {
+    @SuppressWarnings("resource")
+	public static void genExcelFile(GenStats gs, FileOutputStream excelFile) throws Exception {
 
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Bio stats");

@@ -15,7 +15,7 @@ import org.xml.sax.XMLReader;
  */
 public final class BioXMLUtils {
 
-    public static Object XMLToClass(String xmlString, Class classType ){
+    public static Object XMLToClass(String xmlString, @SuppressWarnings("rawtypes") Class classType ){
 
         Object res = null;
 

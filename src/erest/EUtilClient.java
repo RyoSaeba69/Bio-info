@@ -26,9 +26,10 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import bioutils.BioXMLUtils;
+
 import com.sun.deploy.util.StringUtils;
 
-import bioutils.BioXMLUtils;
 import fetchclass.ESearchId;
 
 
@@ -36,7 +37,8 @@ public class EUtilClient {
 
     private static final String EUTIL_API_ESEARCH_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?";
     private static final String EUTIL_API_ESUMMARY_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?";
-    private static final String EUTIL_API_ELINK_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?";
+    @SuppressWarnings("unused")
+	private static final String EUTIL_API_ELINK_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?";
     private static final String EUTIL_API_EFETCH_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?";
     private static final String FETCH_PARAMETER = "db=nuccore&retmode=xml&rettype=gb";
     private static final String CONST_PARAMETERS = "db=genome&retmode=xml";//&tool=adfeutils&email=fangx%40mskcc.org";
@@ -45,7 +47,8 @@ public class EUtilClient {
     public EUtilClient() {
     }
 
-    public List<EFetch> eFetchTitleByGi(String gi) {
+    @SuppressWarnings("unchecked")
+	public List<EFetch> eFetchTitleByGi(String gi) {
 
         String term = "&id=" + gi; // + encode(gi);
         String parameters = CONST_PARAMETERS + term;
@@ -59,7 +62,8 @@ public class EUtilClient {
         String definition = doc.getElementsByTagName("GBSeq_definition").item(0).getTextContent();
         String organism = doc.getElementsByTagName("GBSeq_source").item(0).getTextContent();
 
-        List efetchList = new ArrayList();
+        @SuppressWarnings("rawtypes")
+		List efetchList = new ArrayList();
 
 
         for (int i = 0; i < docSumList.getLength(); i++) {
@@ -80,7 +84,8 @@ public class EUtilClient {
     }
 
 
-    public List<EFetch> eFetchTitleByGi(List giList) {
+    @SuppressWarnings("unchecked")
+	public List<EFetch> eFetchTitleByGi(@SuppressWarnings("rawtypes") List giList) {
 
         String term = "&id=";
 
@@ -106,7 +111,8 @@ public class EUtilClient {
         String gi = doc.getElementsByTagName("GBSeqid").item(1).getTextContent();
         System.out.println("gi: " + gi);
 
-        List efetchList = new ArrayList();
+        @SuppressWarnings("rawtypes")
+		List efetchList = new ArrayList();
 
 
         for (int i = 0; i < docSumList.getLength(); i++) {
@@ -133,7 +139,8 @@ public class EUtilClient {
         return esummaryList.get(0).getTitle();
     }
 
-    public List<ESummary> esummaryGIByLocusID(List giList) {
+    @SuppressWarnings("unchecked")
+	public List<ESummary> esummaryGIByLocusID(@SuppressWarnings("rawtypes") List giList) {
 
         String term = "&id=";
 
@@ -155,7 +162,8 @@ public class EUtilClient {
 
         NodeList docSumList = doc.getElementsByTagName("DocSum");
 
-        List esummaryList = new ArrayList();
+        @SuppressWarnings("rawtypes")
+		List esummaryList = new ArrayList();
 
 
         for (int i = 0; i < docSumList.getLength(); i++) {
@@ -171,7 +179,8 @@ public class EUtilClient {
         return esummaryList;
     }
 
-    public List<ESummary> esummaryGIByLocusID(String gi) {
+    @SuppressWarnings("unchecked")
+	public List<ESummary> esummaryGIByLocusID(String gi) {
 
         String term = "&id=" + gi;
         String parameters = CONST_PARAMETERS + term;
@@ -181,7 +190,8 @@ public class EUtilClient {
 
         NodeList docSumList = doc.getElementsByTagName("DocSum");
 
-        List esummaryList = new ArrayList();
+        @SuppressWarnings("rawtypes")
+		List esummaryList = new ArrayList();
 
 
         for (int i = 0; i < docSumList.getLength(); i++) {

@@ -1,6 +1,5 @@
 package bioutils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -63,5 +62,13 @@ public class BioStringUtil {
 
         return hmRes;
     }
+
+	public HashMap<String, Integer> getInitHmAnalysis() {
+		return initHmAnalysis;
+	}
+
+	public void setInitHmAnalysis(HashMap<String, Integer> initHmAnalysis) {
+		this.initHmAnalysis = initHmAnalysis;
+	}
 
 }

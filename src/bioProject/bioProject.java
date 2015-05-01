@@ -17,7 +17,7 @@ public class bioProject {
 	
 	public static void main(String[] args){
 		init();
-		MainFenetre ihm = new MainFenetre();
+		new MainFenetre();
 		initData();
 	}
 	
