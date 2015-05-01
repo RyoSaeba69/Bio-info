@@ -137,4 +137,8 @@ public class GenStats {
         this.phTrinucleotide.add(newPhTri);
     }
 
+    public boolean isUsable(){
+        return this.phTrinucleotide != null && this.phTrinucleotide.size() > 0;
+    }
+
 }

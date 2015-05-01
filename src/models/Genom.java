@@ -3,10 +3,14 @@ package models;
 import bioadapters.SequenceAdapter;
 import bioutils.BioStringUtil;
 import erest.BioHashMap;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
 
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.util.*;
 
@@ -86,15 +90,42 @@ public class Genom {
    				+ ", sequenceLength=" + sequenceLength + "]";
    	}
 
-    public void createFiles(){
-        String taxonomySeparator = "; ";
-        String basePath = this.taxonomy.replaceAll(taxonomySeparator, File.pathSeparator);
-        File newDirectories = new File(basePath);
-        if(newDirectories.mkdirs()){
-            System.out.println("Directory successfully created : "+basePath);
-        } else {
-            System.out.println("Failed to create directory : "+basePath);
+    public void createStatsAndFiles(){
+        GenStats gs = this.generateStats();
+        this.createFiles(gs);
+    }
+
+    public void createFiles(GenStats gs){
+
+        if(gs.isUsable()) {
+            String excelExt = ".xls";
+            String taxonomySeparator = "; ";
+            String statsDirectory = "." + File.separator + "biostats" + File.separator;
+            String basePath = statsDirectory + this.taxonomy.replaceAll(taxonomySeparator, File.separator);
+            File newDirectories = new File(basePath);
+            if (newDirectories.mkdirs()) {
+                System.out.println("Directory successfully created : " + basePath);
+            } else {
+                System.out.println("Failed to create directory : " + basePath);
+            }
+
+            String filePath = basePath + File.separator + this.organism + excelExt;
+            File newExcelFile =  new File(filePath);
+            if(newExcelFile.exists()){
+                filePath = newExcelFile.getParent() + File.separator + this.organism + "("+new File(newExcelFile.getParent()).listFiles().length+")"+excelExt;
+            }
+
+            gs.setPath(basePath);
+
+            try {
+                FileOutputStream newStatFile = new FileOutputStream(filePath);
+                genExcelFile(gs, newStatFile);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+
     }
 
     public Vector<Feature> findCDSFeatures(){
@@ -198,5 +229,93 @@ public class Genom {
         resStats.setUnUsedCds(unUsedCds);
 
         return resStats;
+    }
+
+    public static void genExcelFile(GenStats gs, FileOutputStream excelFile) throws Exception {
+
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("Bio stats");
+
+        // Name
+        Row nameRow = sheet.createRow(0);
+        nameRow.createCell(0).setCellValue("Name");
+        nameRow.createCell(1).setCellValue(gs.getName());
+
+        // Path
+        Row pathRow = sheet.createRow(1);
+        pathRow.createCell(0).setCellValue("Path");
+        pathRow.createCell(1).setCellValue(gs.getPath());
+
+        // Nb CDS
+        Row nbCDSRow = sheet.createRow(2);
+        nbCDSRow.createCell(0).setCellValue("Nb Cds");
+        nbCDSRow.createCell(1).setCellValue(gs.getNbCds());
+
+        // Nb trinucleotide
+        Row nbTriRow = sheet.createRow(3);
+        nbTriRow.createCell(0).setCellValue("Nb trinucleotide");
+        nbTriRow.createCell(1).setCellValue(gs.getNbTrinucleotide());
+
+        // Nb unused CDS
+        Row nbUnusedRow = sheet.createRow(4);
+        nbUnusedRow.createCell(0).setCellValue("Nb unused CDS");
+        nbUnusedRow.createCell(1).setCellValue(gs.getUnUsedCds());
+
+        // Stats header
+        int statsHeaderNumRow = 5;
+        Row statsHeaderRow = sheet.createRow(statsHeaderNumRow);
+        statsHeaderRow.createCell(0).setCellValue("Trinucleotides");
+
+        statsHeaderRow.createCell(1).setCellValue("Nb Ph0");
+        statsHeaderRow.createCell(2).setCellValue("Pb Ph0");
+
+        HashMap<String, TriInfo> hmPh0 = gs.getPhTrinucleotide().get(0).get(0);
+
+        int currentLine = statsHeaderNumRow + 1;
+        for (Map.Entry<String, TriInfo> entry : hmPh0.entrySet()) {
+            Row currentRow = sheet.createRow(currentLine);
+
+            currentRow.createCell(0).setCellValue(entry.getKey());
+            currentRow.createCell(1).setCellValue(entry.getValue().getPhCount());
+            currentRow.createCell(2).setCellValue(entry.getValue().getPbCount());
+
+            currentLine++;
+        }
+
+        currentLine = statsHeaderNumRow + 1;
+        statsHeaderRow.createCell(3).setCellValue("Nb Ph1");
+        statsHeaderRow.createCell(4).setCellValue("Pb Ph1");
+        HashMap<String, TriInfo> hmPh1 = gs.getPhTrinucleotide().get(0).get(1);
+
+        for (Map.Entry<String, TriInfo> entry : hmPh1.entrySet()) {
+            Row currentRow = sheet.getRow(currentLine);
+
+            currentRow.createCell(3).setCellValue(entry.getValue().getPhCount());
+            currentRow.createCell(4).setCellValue(entry.getValue().getPbCount());
+
+            currentLine++;
+        }
+
+        statsHeaderRow.createCell(5).setCellValue("Nb Ph2");
+        statsHeaderRow.createCell(6).setCellValue("Pb Ph2");
+
+        currentLine = statsHeaderNumRow + 1;
+        HashMap<String, TriInfo> hmPh2 = gs.getPhTrinucleotide().get(0).get(2);
+
+        for (Map.Entry<String, TriInfo> entry : hmPh2.entrySet()) {
+            Row currentRow = sheet.getRow(currentLine);
+
+            currentRow.createCell(5).setCellValue(entry.getValue().getPhCount());
+            currentRow.createCell(6).setCellValue(entry.getValue().getPbCount());
+
+            currentLine++;
+        }
+
+
+
+
+
+        workbook.write(excelFile);
+        excelFile.close();
     }
 }
