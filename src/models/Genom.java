@@ -165,7 +165,7 @@ public class Genom {
             newTriInfo.setPhCount(count);
 
             if (totalTri > 0) {
-                newTriInfo.setPbCount((count * 100) / totalTri);
+                newTriInfo.setPbCount((count * 100) / (double) totalTri);
             } else {
                 newTriInfo.setPbCount(0);
             }
