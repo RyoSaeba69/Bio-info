@@ -106,12 +106,12 @@ public class Genom {
 
         if(gs.isUsable()) {
 
-            String fileSeparator = "";
-            if(File.separator.equals("\\")){
-                 fileSeparator = "\\";
-            } else {
-                fileSeparator = File.separator;
-            }
+            String fileSeparator = "/";
+//            if(File.separator.equals("\\")){
+//                 fileSeparator = "\\";
+//            } else {
+//                fileSeparator = File.separator;
+//            }
 
             String excelExt = ".xls";
             String taxonomySeparator = "; ";
