@@ -98,10 +98,18 @@ public class Genom {
     public void createFiles(GenStats gs){
 
         if(gs.isUsable()) {
+
+            String fileSeparator = "";
+            if(File.separator.equals("\\")){
+                 fileSeparator = "\\";
+            } else {
+                fileSeparator = File.separator;
+            }
+
             String excelExt = ".xls";
             String taxonomySeparator = "; ";
-            String statsDirectory = "." + File.separator + "biostats" + File.separator;
-            String basePath = statsDirectory + this.taxonomy.replaceAll(taxonomySeparator, File.separator);
+            String statsDirectory = "." + fileSeparator + "biostats" + fileSeparator;
+            String basePath = statsDirectory + this.taxonomy.replaceAll(taxonomySeparator, fileSeparator);
             File newDirectories = new File(basePath);
             if (newDirectories.mkdirs()) {
                 System.out.println("Directory successfully created : " + basePath);
@@ -109,10 +117,10 @@ public class Genom {
                 System.out.println("Failed to create directory : " + basePath);
             }
 
-            String filePath = basePath + File.separator + this.organism + excelExt;
+            String filePath = basePath + fileSeparator + this.organism + excelExt;
             File newExcelFile =  new File(filePath);
             if(newExcelFile.exists()){
-                filePath = newExcelFile.getParent() + File.separator + this.organism + "("+new File(newExcelFile.getParent()).listFiles().length+")"+excelExt;
+                filePath = newExcelFile.getParent() + fileSeparator + this.organism + "("+new File(newExcelFile.getParent()).listFiles().length+")"+excelExt;
             }
 
             gs.setPath(basePath);
