@@ -51,7 +51,7 @@ public class bioProject {
 		ThreadManager = new ThreadManager(genes);
 		
 		ThreadManager.init();
-		ThreadManager.startAllTasks();
+		//ThreadManager.startAllTasks();
 	}
 	
 	public static MainFenetre getIhm() {

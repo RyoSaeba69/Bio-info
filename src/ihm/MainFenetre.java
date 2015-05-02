@@ -2,9 +2,7 @@ package ihm;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.io.File;
 
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
@@ -13,7 +11,6 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import bioProject.bioProject;
-import controllers.FileController;
 
 public class MainFenetre extends JFrame {
 
@@ -23,15 +20,16 @@ public class MainFenetre extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 	private JSplitPane split;
-	
+	private JSplitPane split2;
+	private JPanel container;
+	private JPanel menu;
 	private JPanel progressBar;
-	private static JPanel TreeArborescence;
-
+	private JPanel TreeArborescence;
 	private JPanel console;
 
 	public MainFenetre() {
 		this.setTitle(bioProject.appName + " - " + bioProject.appDescription + " v" + bioProject.appVersion);
-	    this.setSize(1200, 500);
+	    this.setSize(1200, 700);
 	    this.setLocationRelativeTo(null);
 	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);             
 	    
@@ -46,17 +44,11 @@ public class MainFenetre extends JFrame {
 	    	catch (UnsupportedLookAndFeelException e) {System.out.println(e);}
 	    	catch (IllegalAccessException e) {System.out.println(e);}
 	    
-	    JFileChooser dialogue = new JFileChooser(new File("."));
-	    dialogue.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		
-		if (dialogue.showSaveDialog(null)== 
-		    JFileChooser.APPROVE_OPTION) {
-		    FileController.setFichier(dialogue.getSelectedFile());
-		}
-	    
-	    JPanel container = new JPanel();
+	    container = new JPanel();
 	    container.setLayout(new BorderLayout());
 
+	    menu = new MenuPanel();
+	    
 	    progressBar = new ProgressBarPanel();
 	    progressBar.setBackground(Color.white);
 	    console = new TextAreaOutputStreamPanel();
@@ -66,13 +58,16 @@ public class MainFenetre extends JFrame {
 	    container.add(console, BorderLayout.CENTER);
 	    
 	    
-	    //On crée deux conteneurs de couleurs différentes
 	    TreeArborescence = new TreePanel();
 	    TreeArborescence.setBackground(Color.white);
+	    
+	    split2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, menu, TreeArborescence);
+	    split2.setDividerLocation(300);
+	    
 	    //On passe les deux précédents JSplitPane à celui-ci
-	    split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, TreeArborescence, container);
+	    split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, split2, container);
 	    //On place le troisième séparateur
-	    split.setDividerLocation(300);
+	    split.setDividerLocation(200);
 	
 	    //On le passe ensuite au content pane de notre objet Fenetre
 	    //placé au centre pour qu'il utilise tout l'espace disponible
@@ -82,16 +77,45 @@ public class MainFenetre extends JFrame {
 	}
 	
 	public void refreshTree() {
-		TreeArborescence = new TreePanel();
-		TreeArborescence.updateUI();
-		split.updateUI();
 	}
 	
-	public static JPanel getTreeArborescence() {
-		return TreeArborescence;
+	public JPanel getTreeArborescence() {
+		return this.TreeArborescence;
 	}
 
-	public static void setTreeArborescence(JPanel treeArborescence) {
-		TreeArborescence = treeArborescence;
+	public void setTreeArborescence(JPanel treeArborescence) {
+		this.TreeArborescence = treeArborescence;
+	}
+	
+	public JSplitPane getSplit() {
+		return split;
+	}
+
+	public void setSplit(JSplitPane split) {
+		this.split = split;
+	}
+
+	public JPanel getProgressBar() {
+		return progressBar;
+	}
+
+	public void setProgressBar(JPanel progressBar) {
+		this.progressBar = progressBar;
+	}
+
+	public JPanel getConsole() {
+		return console;
+	}
+
+	public void setConsole(JPanel console) {
+		this.console = console;
+	}
+	
+	public JSplitPane getSplit2() {
+		return split2;
+	}
+
+	public void setSplit2(JSplitPane split2) {
+		this.split2 = split2;
 	}
 }

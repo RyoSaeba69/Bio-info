@@ -42,7 +42,7 @@ public class ThreadManager extends Thread {
 	/**
 	 * Fonction de lancement des Threads
 	 */
-	public void startAllTasks() {
+	public static void startAllTasks() {
 		for(GetDataThread tTemp : getAllTasks()) {
 			System.out.println("Lancement Thread n " + tTemp.getId() + " nameSearch :" + tTemp.getResearchName());
 			tTemp.start();

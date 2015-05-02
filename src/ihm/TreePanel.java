@@ -24,7 +24,7 @@ public class TreePanel extends JPanel {
 	private void listRoot(){      
 	    this.racine = new DefaultMutableTreeNode();
 
-	    
+	    try {
 	      DefaultMutableTreeNode lecteur = new DefaultMutableTreeNode(FileController.getFichier().getAbsolutePath());
 	      try {
 	        for(File nom : FileController.getFichier().listFiles()){
@@ -39,6 +39,9 @@ public class TreePanel extends JPanel {
 	    arbre.setRootVisible(false);
 	    //Que nous plaçons sur le ContentPane de notre JPanel à l'aide d'un scroll 
 	    add(new JScrollPane(arbre));
+	    } catch(NullPointerException e) {
+	    	System.out.println("pas de dossier enregistre");
+	    }
 	  }
 
 	  private DefaultMutableTreeNode listFile(File file, DefaultMutableTreeNode node){

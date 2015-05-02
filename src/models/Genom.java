@@ -1,7 +1,5 @@
 package models;
 
-import ihm.MainFenetre;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
@@ -20,9 +18,9 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 
-import controllers.FileController;
 import bioadapters.SequenceAdapter;
 import bioutils.BioStringUtil;
+import controllers.FileController;
 import erest.BioHashMap;
 
 /**
@@ -135,7 +133,6 @@ public class Genom {
             try {
                 FileOutputStream newStatFile = new FileOutputStream(filePath);
                 genExcelFile(gs, newStatFile);
-				bioProject.bioProject.getIhm().refreshTree();
             } catch (Exception e) {
                 e.printStackTrace();
             }
