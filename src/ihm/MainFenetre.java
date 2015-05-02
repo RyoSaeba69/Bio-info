@@ -38,11 +38,11 @@ public class MainFenetre extends JFrame {
 	    	  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 	    	  //Ici on force tous les composants de notre fenêtre (this) à se redessiner avec le « look and feel » du système
 	    	  SwingUtilities.updateComponentTreeUI(this);
-	    	}
-	    	catch (InstantiationException e) {System.out.println(e);}
-	    	catch (ClassNotFoundException e) {System.out.println(e);}
-	    	catch (UnsupportedLookAndFeelException e) {System.out.println(e);}
-	    	catch (IllegalAccessException e) {System.out.println(e);}
+    	}
+    	catch (InstantiationException e) {System.out.println(e);}
+    	catch (ClassNotFoundException e) {System.out.println(e);}
+    	catch (UnsupportedLookAndFeelException e) {System.out.println(e);}
+    	catch (IllegalAccessException e) {System.out.println(e);}
 	    
 	    container = new JPanel();
 	    container.setLayout(new BorderLayout());
@@ -74,9 +74,6 @@ public class MainFenetre extends JFrame {
 	    this.getContentPane().add(split, BorderLayout.CENTER);
 		
 	    this.setVisible(true);
-	}
-	
-	public void refreshTree() {
 	}
 	
 	public JPanel getTreeArborescence() {

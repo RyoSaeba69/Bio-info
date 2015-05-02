@@ -11,13 +11,17 @@ import javax.swing.JTextArea;
 public class TextAreaOutputStreamPanel extends JPanel {
 
    private JTextArea textArea = new JTextArea(15, 30);
-   private TextAreaOutputStream taOutputStream = new TextAreaOutputStream(
-         textArea, "bioProject");
+   private TextAreaOutputStream taOutputStream = new TextAreaOutputStream(textArea, "bioProject");
 
    public TextAreaOutputStreamPanel() {
       setLayout(new BorderLayout());
       add(new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
             JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
-      System.setOut(new PrintStream(taOutputStream));
+      try {
+    	  System.setOut(new PrintStream(taOutputStream));
+      } catch (Exception e) {
+    	  System.out.println(e);
+    	  e.printStackTrace();
+      }
    }
 }

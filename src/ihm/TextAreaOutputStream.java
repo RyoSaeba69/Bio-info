@@ -3,8 +3,9 @@ package ihm;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import javafx.application.Platform;
+
 import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
 
 public class TextAreaOutputStream extends OutputStream {
 
@@ -34,7 +35,7 @@ public class TextAreaOutputStream extends OutputStream {
 
 	      if (b == '\n') {
 	         final String text = sb.toString() + "\n";
-	         SwingUtilities.invokeLater(new Runnable() {
+	         Platform.runLater(new Runnable() {
 	            public void run() {
 	               textArea.append(text);
 	            }

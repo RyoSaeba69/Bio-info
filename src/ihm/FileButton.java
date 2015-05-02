@@ -28,8 +28,8 @@ public class FileButton extends JButton implements MouseListener {
 		    FileController.setFichier(dialogue.getSelectedFile());
 		}
 		
-		bioProject.bioProject.getIhm().setVisible(false);
-		bioProject.bioProject.setIhm(new MainFenetre());
+		bioProject.bioProject.ihm.setVisible(false);
+		bioProject.bioProject.ihm = new MainFenetre();
 	}
 
 	@Override

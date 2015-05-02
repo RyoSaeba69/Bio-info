@@ -1,12 +1,15 @@
 package bioProject;
 
 import ihm.MainFenetre;
+import ihm.SysTrayIcon;
 
 import java.util.Vector;
 
+import javafx.application.Application;
+import javafx.stage.Stage;
 import tasks.ThreadManager;
 
-public class bioProject {
+public class bioProject extends Application {
 
 	public static String appName;
 	public static String appDescription;
@@ -14,17 +17,16 @@ public class bioProject {
 	public static String appDevs;
 	
 	public static ThreadManager ThreadManager;
-	
 	public static MainFenetre ihm;
 
 	public static void main(String[] args){
-		init();
-		
+		initInformation();
 		ihm = new MainFenetre();
+		new SysTrayIcon();
 		initData();
 	}
 	
-	private static void init() {
+	private static void initInformation() {
 		appName = "BioProject M1";
 		appDescription = "Projet de Bio-Informatique de recherche et de statistique sur les genes.";
 		appVersion = "0.1";
@@ -53,12 +55,10 @@ public class bioProject {
 		ThreadManager.init();
 		//ThreadManager.startAllTasks();
 	}
-	
-	public static MainFenetre getIhm() {
-		return ihm;
-	}
 
-	public static void setIhm(MainFenetre ihm) {
-		bioProject.ihm = ihm;
+	@Override
+	public void start(Stage arg0) throws Exception {
+		// TODO Auto-generated method stub
+		
 	}
 }
