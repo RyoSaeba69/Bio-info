@@ -1,6 +1,10 @@
 package models;
 
+import erest.BioHashMap;
+
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -17,6 +21,7 @@ public class GenStats {
     private int ph1Total;
     private int ph2Total;
     private int totalTrinucleotide;
+    private int totalHmRes;
 
     private Vector<Vector<HashMap<String, TriInfo>>> phTrinucleotide;
 
@@ -92,6 +97,13 @@ public class GenStats {
         this.ph2Total = ph2Total;
     }
 
+    public int getTotalHmRes() {
+        return totalHmRes;
+    }
+
+    public void setTotalHmRes(int totalHmRes) {
+        this.totalHmRes = totalHmRes;
+    }
 
     public int getTotalTrinucleotide() {
         return totalTrinucleotide;
@@ -139,6 +151,50 @@ public class GenStats {
 
     public boolean isUsable(){
         return this.phTrinucleotide != null && this.phTrinucleotide.size() > 0;
+    }
+
+    public Vector<HashMap<String, TriInfo>> computeAllTrinucleotide(){
+
+        Vector<HashMap<String, TriInfo>> hmRes = new Vector<HashMap<String, TriInfo>>();
+
+        for(int i =0; i < 3;i++){
+            HashMap<String, TriInfo> newHm = new HashMap<String, TriInfo>();
+            for(String triKey : BioHashMap.initVector){
+                newHm.put(triKey, new TriInfo());
+            }
+            hmRes.add(newHm);
+        }
+
+
+
+        for(int i = 0; i < 3; i++){
+            for(Vector<HashMap<String, TriInfo>> allHm : this.phTrinucleotide){
+                HashMap<String, TriInfo> currentHm = allHm.get(i);
+                for(Map.Entry<String, TriInfo> mValue : currentHm.entrySet()){
+                    int newCountTri = mValue.getValue().getPhCount() + hmRes.get(i).get(mValue.getKey()).getPhCount();
+                    hmRes.get(i).get(mValue.getKey()).setPhCount(newCountTri);
+                }
+            }
+        }
+
+        Vector<TriInfo> allValues = new Vector<TriInfo>();
+        allValues.addAll(hmRes.get(0).values());
+
+        double total = 0.0;
+        for(TriInfo t : allValues){
+            total += t.getPhCount();
+        }
+
+        this.totalHmRes = (int) total;
+
+        for(HashMap<String, TriInfo> curHm : hmRes){
+            for(Map.Entry<String, TriInfo> meValue : curHm.entrySet()) {
+                double percentage = (meValue.getValue().getPhCount() / total) * 100.0;
+                meValue.getValue().setPbCount(percentage);
+            }
+        }
+
+        return hmRes;
     }
 
 }

@@ -10,6 +10,8 @@ public class TriInfo {
 
 
     public TriInfo() {
+        this.pbCount = 0;
+        this.phCount = 0;
     }
 
     public int getPhCount() {
