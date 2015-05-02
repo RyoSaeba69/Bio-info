@@ -128,17 +128,19 @@ public class GetDataThread extends Thread {
 			System.out.println("Peak Thread Count = " + peakThreadCount);
 			
 			for(int i = 0; nbExec < 0 || i < nbExec; i++) {
-				System.out.println("Recuperation des donnees, veuillez patienter...");
+				System.out.println("Recuperation des donnees "+this.getResearchName()+", veuillez patienter...");
 				dataController.setAllIds(this.getUtilClient().esearchAllId(this.getResearchName(), this.getOpts()));
 				//dataController.setSeqRes(this.getUtilClient().efetchGenomsByIds(dataController.getAllIds()));
 				dataController.setSeqRes(this.getUtilClient().efetchAllGenomsByIds(dataController.getAllIds()));
-	
+				
+				System.out.println("Fin de la récuperation des donnees " + this.getResearchName());
+				System.out.println("Debut traitement des donnees " + this.getResearchName());
 				ProgressBarPanel.setMaximumProgressBar(dataController.getSeqRes().size());
 				int nbr = 1;
 				for(Genom gTemp : dataController.getSeqRes()) {
 					ProgressBarPanel.setProgressBarValue(nbr);nbr++;
+					System.out.println("TRACE : "+ gTemp.toString());
 					gTemp.createStatsAndFiles();
-					//System.out.println("TRACE : "+ gTemp.toString());
 				}
 				//System.out.println("Test Sequences : " + dataController.getSeqRes().toString());
 			}

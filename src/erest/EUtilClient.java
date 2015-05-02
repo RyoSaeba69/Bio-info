@@ -319,33 +319,47 @@ public class EUtilClient {
     }
 
     public Vector<String> efetchAllSeqByIds(Vector<String> ids){
-        System.out.println("Fetching "+ids.size()+" Genom files  ");
-
-        BioHashMap<String, String> options = new BioHashMap<String, String>();
-        Vector<String> allXml = new Vector<String>();
-
-        int i = 0, fetchSize = 1000;
-        @SuppressWarnings("unused")
-		int realFetchSize = fetchSize;
-        List<String> subIds;
-
-        while(i <= ids.size()) {
-            //realFetchSize = fetchSize;
-            if(i + fetchSize > ids.size()){
-                subIds = ids.subList(i, ids.size());
-
-            } else {
-               subIds = ids.subList(i, i + fetchSize);
-            }
-
-//            System.out.println("Fetching "+subIds.size()+" Genom files  ");
-            options.put("id", StringUtils.join(subIds, ","));
-
-            String parameters = FETCH_PARAMETER;
-            String resturl = EUTIL_API_EFETCH_URL + parameters + options.toBioParameters();
-            allXml.add(sendGet(resturl));
-            i += fetchSize;
-        }
+    	Vector<String> allXml = new Vector<String>();
+    	try {
+	        System.out.println("Fetching "+ids.size()+" Genom files  ");
+	
+	        BioHashMap<String, String> options = new BioHashMap<String, String>();
+	
+	        int i = 0, fetchSize = 1000;
+	        @SuppressWarnings("unused")
+			int realFetchSize = fetchSize;
+	        List<String> subIds;
+	
+	        while(i <= ids.size()) {
+	            //realFetchSize = fetchSize;
+	            if(i + fetchSize > ids.size()){
+	                subIds = ids.subList(i, ids.size());
+	
+	            } else {
+	               subIds = ids.subList(i, i + fetchSize);
+	            }
+	
+	            //System.out.println("Fetching subIds "+subIds.size()+" Genom files  ");
+	            options.put("id", StringUtils.join(subIds, ","));
+	            //System.out.println(options.toString());
+	
+	            String parameters = FETCH_PARAMETER;
+	            String resturl = EUTIL_API_EFETCH_URL + parameters + options.toBioParameters();
+	            //System.out.println("En attente d'une reponse serveur de la requete :\n " + resturl);
+	            allXml.add(sendGet(resturl));
+	            i += fetchSize;
+	        }
+	        System.out.println("Fin FetchSeqById");
+    	} catch(Exception e) {
+    		try {
+    			System.out.println("Erreur, relance de la fonction : " + e);
+				Thread.sleep(5000);
+				efetchAllSeqByIds(ids);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+    	}
         return allXml;
     }
 
@@ -397,6 +411,12 @@ public class EUtilClient {
         } catch (MalformedURLException e) {
             System.out.println("MalformedURLException:"+e);
             e.printStackTrace();
+            try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
             sendGet(uri);
         }
         StringBuilder repsonse = new StringBuilder();
@@ -416,6 +436,12 @@ public class EUtilClient {
         } catch (Exception e) {
             System.out.println("Exception:" + e);
             e.printStackTrace();
+            try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
             sendGet(uri);
         } finally {
             connection.disconnect();
