@@ -139,7 +139,7 @@ public class GetDataThread extends Thread {
 				int nbr = 1;
 				for(Genom gTemp : dataController.getSeqRes()) {
 					ProgressBarPanel.setProgressBarValue(nbr);nbr++;
-					System.out.println("TRACE : "+ gTemp.toString());
+					//System.out.println("TRACE : "+ gTemp.toString());
 					gTemp.createStatsAndFiles();
 				}
 				//System.out.println("Test Sequences : " + dataController.getSeqRes().toString());
