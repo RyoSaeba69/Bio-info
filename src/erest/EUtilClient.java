@@ -325,7 +325,8 @@ public class EUtilClient {
         Vector<String> allXml = new Vector<String>();
 
         int i = 0, fetchSize = 1000;
-        int realFetchSize = fetchSize;
+        @SuppressWarnings("unused")
+		int realFetchSize = fetchSize;
         List<String> subIds;
 
         while(i <= ids.size()) {
@@ -394,10 +395,12 @@ public class EUtilClient {
             url = new URL(uri);
 
         } catch (MalformedURLException e) {
-            System.out.println("MalformedURLException");
+            System.out.println("MalformedURLException:"+e);
             e.printStackTrace();
+            sendGet(uri);
         }
-        StringBuffer repsonse = new StringBuffer();
+        StringBuilder repsonse = new StringBuilder();
+        //StringBuffer repsonse = new StringBuffer();
         try {
 
             connection = (HttpURLConnection) url.openConnection();
@@ -410,9 +413,10 @@ public class EUtilClient {
                 repsonse.append(output);
             }
             br.close();
-        } catch (IOException e) {
-            System.out.println("IOException");
+        } catch (Exception e) {
+            System.out.println("Exception:" + e);
             e.printStackTrace();
+            sendGet(uri);
         } finally {
             connection.disconnect();
         }

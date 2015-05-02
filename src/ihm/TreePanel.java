@@ -20,13 +20,15 @@ public class TreePanel extends JPanel {
 	}
 	
 	private void listRoot(){      
-	    this.racine = new DefaultMutableTreeNode();       
+	    this.racine = new DefaultMutableTreeNode();
+	    String curDir = System.getProperty("user.dir");
+	    System.out.println ("Le répertoire courant est: "+curDir);
 	    for(File file : File.listRoots()){
 	      DefaultMutableTreeNode lecteur = 
 	      new DefaultMutableTreeNode(file.getAbsolutePath());
 	      try {
 	        for(File nom : file.listFiles()){
-	          DefaultMutableTreeNode node = new DefaultMutableTreeNode(nom.getName()+"\\");               
+	          DefaultMutableTreeNode node = new DefaultMutableTreeNode(nom.getName()+"\\");    
 	          lecteur.add(this.listFile(nom, node));               
 	        }
 	      } catch (NullPointerException e) {}

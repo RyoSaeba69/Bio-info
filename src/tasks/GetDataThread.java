@@ -22,6 +22,8 @@ public class GetDataThread extends Thread {
 	 */
 	private int nbExec;
 	
+	private boolean finish;
+	
 	/**
 	 * Nom de l'�l�ment � rechercher
 	 */
@@ -52,6 +54,7 @@ public class GetDataThread extends Thread {
 		this.setResearchName(researchName);
 		this.setOpts(new BioHashMap<String,String>());
 		this.setUtilClient(new EUtilClient());
+		this.setFinish(false);
 		
 		setDataController(new DataController());
 	}
@@ -69,6 +72,7 @@ public class GetDataThread extends Thread {
 		this.setResearchName(researchName);
 		this.setOpts(opts);
 		this.setUtilClient(new EUtilClient());
+		this.setFinish(false);
 		
 		setDataController(new DataController());
 	}
@@ -83,6 +87,7 @@ public class GetDataThread extends Thread {
 		this.setResearchName(researchName);
 		this.setOpts(new BioHashMap<String,String>());
 		this.setUtilClient(new EUtilClient());
+		this.setFinish(false);
 		
 		setDataController(new DataController());
 	}
@@ -98,44 +103,52 @@ public class GetDataThread extends Thread {
 		this.setResearchName(researchName);
 		this.setOpts(opts);
 		this.setUtilClient(new EUtilClient());
+		this.setFinish(false);
 		
 		setDataController(new DataController());
 	}
 	
 	@Override
 	public void run() {
-		System.out.println("DEBUT RUN GetDataThread");
-		//Test
-		ProgressBarPanel.setProgressBarValue(1);
-		
-		RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
-		 
-		String jvmName = runtimeBean.getName();
-		System.out.println("JVM Name = " + jvmName);
-		long pid = Long.valueOf(jvmName.split("@")[0]);
-		System.out.println("JVM PID  = " + pid);
- 
-		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
- 
-		int peakThreadCount = bean.getPeakThreadCount();
-		System.out.println("Peak Thread Count = " + peakThreadCount);
-		
-		for(int i = 0; nbExec < 0 || i < nbExec; i++) {
-			System.out.println("Recuperation des donnees, veuillez patienter...");
-			dataController.setAllIds(this.getUtilClient().esearchAllId(this.getResearchName(), this.getOpts()));
-			//dataController.setSeqRes(this.getUtilClient().efetchGenomsByIds(dataController.getAllIds()));
-			dataController.setSeqRes(this.getUtilClient().efetchAllGenomsByIds(dataController.getAllIds()));
-
-			ProgressBarPanel.setMaximumProgressBar(dataController.getSeqRes().size());
-			int nbr = 1;
-			for(Genom gTemp : dataController.getSeqRes()) {
-				ProgressBarPanel.setProgressBarValue(nbr);nbr++;
-				gTemp.createStatsAndFiles();
-				//System.out.println("TRACE : "+ gTemp.toString());
+		try {
+			System.out.println("DEBUT RUN GetDataThread s'occupant de la recherche : " + this.getResearchName());
+			//Test
+			ProgressBarPanel.setProgressBarValue(1);
+			
+			RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
+			 
+			String jvmName = runtimeBean.getName();
+			System.out.println("JVM Name = " + jvmName);
+			long pid = Long.valueOf(jvmName.split("@")[0]);
+			System.out.println("JVM PID  = " + pid);
+	 
+			ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+	 
+			int peakThreadCount = bean.getPeakThreadCount();
+			System.out.println("Peak Thread Count = " + peakThreadCount);
+			
+			for(int i = 0; nbExec < 0 || i < nbExec; i++) {
+				System.out.println("Recuperation des donnees, veuillez patienter...");
+				dataController.setAllIds(this.getUtilClient().esearchAllId(this.getResearchName(), this.getOpts()));
+				//dataController.setSeqRes(this.getUtilClient().efetchGenomsByIds(dataController.getAllIds()));
+				dataController.setSeqRes(this.getUtilClient().efetchAllGenomsByIds(dataController.getAllIds()));
+	
+				ProgressBarPanel.setMaximumProgressBar(dataController.getSeqRes().size());
+				int nbr = 1;
+				for(Genom gTemp : dataController.getSeqRes()) {
+					ProgressBarPanel.setProgressBarValue(nbr);nbr++;
+					gTemp.createStatsAndFiles();
+					//System.out.println("TRACE : "+ gTemp.toString());
+				}
+				//System.out.println("Test Sequences : " + dataController.getSeqRes().toString());
 			}
-			//System.out.println("Test Sequences : " + dataController.getSeqRes().toString());
+			System.out.println("FIN RUN GetDataThread s'occupant de la recherche : " + this.getResearchName());
+			this.setFinish(true);
+			ThreadManager.getEndProgramme();
+		} catch(Exception e) {
+			System.out.println("Le Thread s'occupant de la recherche des " + this.getResearchName() + " a rencontre une erreur : " + e);
+			this.setFinish(true);
 		}
-		System.out.println("FIN RUN GetDataThread");
 	}
 
 	public long getRepeat() {
@@ -184,5 +197,13 @@ public class GetDataThread extends Thread {
 
 	public static void setDataController(DataController dataController) {
 		GetDataThread.dataController = dataController;
+	}
+
+	public boolean isFinish() {
+		return finish;
+	}
+
+	public void setFinish(boolean finish) {
+		this.finish = finish;
 	}
 }

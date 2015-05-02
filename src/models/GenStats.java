@@ -1,11 +1,10 @@
 package models;
 
-import erest.BioHashMap;
-
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
+
+import erest.BioHashMap;
 
 /**
  * Created by antoine on 4/21/15.

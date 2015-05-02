@@ -23,9 +23,9 @@ public class bioProject {
 	
 	private static void init() {
 		appName = "BioProject M1";
-		appDescription = "Projet de Bio-Informatique de recherche et de statistique sur les g�nes.";
+		appDescription = "Projet de Bio-Informatique de recherche et de statistique sur les genes.";
 		appVersion = "0.1";
-		appDevs = "Quentin CLAUDON, Antoine MULLER, Jean-Fran�ois MULLER, J�r�my SAIDANI";
+		appDevs = "Quentin CLAUDON, Antoine MULLER, Jean-Francois MULLER, Jeremy SAIDANI";
 	}
 	
 	private static void initData() {
