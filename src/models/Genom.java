@@ -2,6 +2,7 @@ package models;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -30,6 +31,9 @@ import erest.BioHashMap;
 @XmlRootElement(name="GBSeq")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Genom {
+
+    @XmlElement(name="GBSeq_locus")
+    private String seq_locus;
 
 	@XmlElement(name="GBSeq_taxonomy")
     private String taxonomy;
@@ -60,6 +64,14 @@ public class Genom {
     private Vector<Feature> featureTable;
 
     public Genom() {}
+
+    public String getSeq_locus() {
+        return seq_locus;
+    }
+
+    public void setSeq_locus(String seq_locus) {
+        this.seq_locus = seq_locus;
+    }
 
     public Vector<Feature> getFeatureTable() {
         return featureTable;
@@ -112,20 +124,17 @@ public class Genom {
 
             String excelExt = ".xls";
             String taxonomySeparator = "; ";
-            String statsDirectory = FileController.getFichier().getAbsolutePath() + fileSeparator + "biostats" + fileSeparator;
+            String statsDirectory = FileController.getFichier().getAbsolutePath() + fileSeparator;
             String basePath = statsDirectory + this.taxonomy.replaceAll(taxonomySeparator, fileSeparator);
             File newDirectories = new File(basePath);
-//            if (newDirectories.mkdirs()) {
-//                System.out.println("Directory successfully created : " + basePath);
-//            } else {
-//                System.out.println("Failed to create directory : " + basePath);
-//            }
+
             newDirectories.mkdirs();
 
-            String filePath = basePath + fileSeparator + this.organism + excelExt;
+//            String filePath = basePath + fileSeparator + this.organism + excelExt;
+            String filePath = basePath + fileSeparator + this.organism +"("+this.getSeq_locus()+")" + excelExt;
             File newExcelFile =  new File(filePath);
             if(newExcelFile.exists()){
-                filePath = newExcelFile.getParent() + fileSeparator + this.organism + "("+new File(newExcelFile.getParent()).listFiles().length+")"+excelExt;
+                filePath = newExcelFile.getParent() + fileSeparator + this.organism + "("+this.getSeq_locus()+")" + "("+new File(newExcelFile.getParent()).listFiles().length+")"+excelExt;
             }
 
             gs.setPath(basePath);
@@ -136,6 +145,43 @@ public class Genom {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            // GENOME
+            File newGenomDirectory = new File(basePath + fileSeparator + "Genome");
+            newGenomDirectory.mkdirs();
+            try {
+                String genomeSeqFileName = "sequence"+"("+this.getSeq_locus()+")"+".txt";
+                PrintWriter outSeq = new PrintWriter(newGenomDirectory.getAbsolutePath() + fileSeparator + genomeSeqFileName);
+                outSeq.println(this.getSequence().getSequence());
+                outSeq.close();
+            } catch(Exception e){
+                e.printStackTrace();
+            }
+            // END GENOME
+
+
+            // GENES
+            if(gs.getUsedSequence().size() > 0) {
+                File newGeneDirectory = new File(basePath + fileSeparator + "Gene");
+                newGeneDirectory.mkdirs();
+                try {
+                    String geneSeqFileName;
+                    for(int i = 0; i < gs.getUsedSequence().size();i++) {
+                        if(gs.getUsedSequence().size() < 2) {
+                            geneSeqFileName = "sequence" + "(" + this.getSeq_locus() + ")" + ".txt";
+                        } else {
+                            geneSeqFileName = "sequence" + "(" + this.getSeq_locus() + ")" +"("+ i +")" + ".txt";
+                        }
+                        PrintWriter outSeq = new PrintWriter(newGeneDirectory.getAbsolutePath() + fileSeparator + geneSeqFileName);
+                        outSeq.println(gs.getUsedSequence().get(i));
+                        outSeq.close();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            //END GENE
+
         }
 
     }
@@ -208,6 +254,7 @@ public class Genom {
                 String usedSeq = seq.applyFeatures(cds);
 
                 if(Sequence.isValid(usedSeq)) {
+                    resStats.addSeq(usedSeq);
                     // there is 3 phases
                     Vector<HashMap<String, TriInfo>> allPhases = new Vector<HashMap<String, TriInfo>>();
                     for(int p = 0; p < 3;p++) {

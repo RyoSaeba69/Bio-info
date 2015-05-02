@@ -21,12 +21,26 @@ public class GenStats {
     private int ph2Total;
     private int totalTrinucleotide;
     private int totalHmRes;
+    private Vector<String> usedSequence = new Vector<String>();
 
     private Vector<Vector<HashMap<String, TriInfo>>> phTrinucleotide;
 
     private HashMap<String, TriInfo> ph0Trinucleotide;
     private HashMap<String, TriInfo> ph1Trinucleotide;
     private HashMap<String, TriInfo> ph2Trinucleotide;
+
+
+    public void addSeq(String usedSeq){
+        this.usedSequence.add(usedSeq);
+    }
+
+    public Vector<String> getUsedSequence() {
+        return usedSequence;
+    }
+
+    public void setUsedSequence(Vector<String> usedSequence) {
+        this.usedSequence = usedSequence;
+    }
 
     public GenStats() {
         this.phTrinucleotide = new Vector<Vector<HashMap<String, TriInfo>>>();
