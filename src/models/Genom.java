@@ -1,5 +1,7 @@
 package models;
 
+import ihm.MainFenetre;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
@@ -18,6 +20,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 
+import controllers.FileController;
 import bioadapters.SequenceAdapter;
 import bioutils.BioStringUtil;
 import erest.BioHashMap;
@@ -111,7 +114,7 @@ public class Genom {
 
             String excelExt = ".xls";
             String taxonomySeparator = "; ";
-            String statsDirectory = "." + fileSeparator + "biostats" + fileSeparator;
+            String statsDirectory = FileController.getFichier().getAbsolutePath() + fileSeparator + "biostats" + fileSeparator;
             String basePath = statsDirectory + this.taxonomy.replaceAll(taxonomySeparator, fileSeparator);
             File newDirectories = new File(basePath);
 //            if (newDirectories.mkdirs()) {
@@ -132,7 +135,7 @@ public class Genom {
             try {
                 FileOutputStream newStatFile = new FileOutputStream(filePath);
                 genExcelFile(gs, newStatFile);
-
+				bioProject.bioProject.getIhm().refreshTree();
             } catch (Exception e) {
                 e.printStackTrace();
             }

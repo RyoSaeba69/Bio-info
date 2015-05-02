@@ -15,9 +15,12 @@ public class bioProject {
 	
 	public static ThreadManager ThreadManager;
 	
+	public static MainFenetre ihm;
+
 	public static void main(String[] args){
 		init();
-		new MainFenetre();
+		
+		ihm = new MainFenetre();
 		initData();
 	}
 	
@@ -49,5 +52,13 @@ public class bioProject {
 		
 		ThreadManager.init();
 		ThreadManager.startAllTasks();
+	}
+	
+	public static MainFenetre getIhm() {
+		return ihm;
+	}
+
+	public static void setIhm(MainFenetre ihm) {
+		bioProject.ihm = ihm;
 	}
 }

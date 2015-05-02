@@ -8,6 +8,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import controllers.FileController;
+
 @SuppressWarnings("serial")
 public class TreePanel extends JPanel {
 
@@ -21,20 +23,17 @@ public class TreePanel extends JPanel {
 	
 	private void listRoot(){      
 	    this.racine = new DefaultMutableTreeNode();
-	    String curDir = System.getProperty("user.dir");
-	    System.out.println ("Le répertoire courant est: "+curDir);
-	    for(File file : File.listRoots()){
-	      DefaultMutableTreeNode lecteur = 
-	      new DefaultMutableTreeNode(file.getAbsolutePath());
+
+	    
+	      DefaultMutableTreeNode lecteur = new DefaultMutableTreeNode(FileController.getFichier().getAbsolutePath());
 	      try {
-	        for(File nom : file.listFiles()){
+	        for(File nom : FileController.getFichier().listFiles()){
 	          DefaultMutableTreeNode node = new DefaultMutableTreeNode(nom.getName()+"\\");    
 	          lecteur.add(this.listFile(nom, node));               
 	        }
 	      } catch (NullPointerException e) {}
 
 	      this.racine.add(lecteur);                 
-	    }
 	    //Nous créons, avec notre hiérarchie, un arbre
 	    arbre = new JTree(this.racine);
 	    arbre.setRootVisible(false);
