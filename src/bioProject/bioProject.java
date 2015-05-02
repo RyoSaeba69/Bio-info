@@ -23,15 +23,28 @@ public class bioProject {
 	
 	private static void init() {
 		appName = "BioProject M1";
-		appDescription = "Projet de Bio-Informatique de recherche et de statistique sur les gênes.";
+		appDescription = "Projet de Bio-Informatique de recherche et de statistique sur les gï¿½nes.";
 		appVersion = "0.1";
-		appDevs = "Quentin CLAUDON, Antoine MULLER, Jean-François MULLER, Jérémy SAIDANI";
+		appDevs = "Quentin CLAUDON, Antoine MULLER, Jean-Franï¿½ois MULLER, Jï¿½rï¿½my SAIDANI";
 	}
 	
 	private static void initData() {
 		Vector<String> genes = new Vector<String>();
 		genes.add("eukaryota");
-		
+		genes.add("viruses");
+		genes.add("virus");
+		genes.add("plasmid");
+		genes.add("plasmids");
+
+		genes.add("archaea");
+		genes.add("chloroplast");
+		genes.add("chloroplasts");
+		genes.add("mitochondria");
+
+		genes.add("prokaryota");
+
+
+
 		ThreadManager = new ThreadManager(genes);
 		
 		ThreadManager.init();

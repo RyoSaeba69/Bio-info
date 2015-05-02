@@ -107,22 +107,18 @@ public class Genom {
         if(gs.isUsable()) {
 
             String fileSeparator = "/";
-//            if(File.separator.equals("\\")){
-//                 fileSeparator = "\\";
-//            } else {
-//                fileSeparator = File.separator;
-//            }
 
             String excelExt = ".xls";
             String taxonomySeparator = "; ";
             String statsDirectory = "." + fileSeparator + "biostats" + fileSeparator;
             String basePath = statsDirectory + this.taxonomy.replaceAll(taxonomySeparator, fileSeparator);
             File newDirectories = new File(basePath);
-            if (newDirectories.mkdirs()) {
-                System.out.println("Directory successfully created : " + basePath);
-            } else {
-                System.out.println("Failed to create directory : " + basePath);
-            }
+//            if (newDirectories.mkdirs()) {
+//                System.out.println("Directory successfully created : " + basePath);
+//            } else {
+//                System.out.println("Failed to create directory : " + basePath);
+//            }
+            newDirectories.mkdirs();
 
             String filePath = basePath + fileSeparator + this.organism + excelExt;
             File newExcelFile =  new File(filePath);

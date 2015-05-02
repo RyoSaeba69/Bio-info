@@ -123,8 +123,9 @@ public class GetDataThread extends Thread {
 		for(int i = 0; nbExec < 0 || i < nbExec; i++) {
 			System.out.println("Recuperation des donnees, veuillez patienter...");
 			dataController.setAllIds(this.getUtilClient().esearchAllId(this.getResearchName(), this.getOpts()));
-			dataController.setSeqRes(this.getUtilClient().efetchGenomsByIds(dataController.getAllIds()));
-			
+			//dataController.setSeqRes(this.getUtilClient().efetchGenomsByIds(dataController.getAllIds()));
+			dataController.setSeqRes(this.getUtilClient().efetchAllGenomsByIds(dataController.getAllIds()));
+
 			ProgressBarPanel.setMaximumProgressBar(dataController.getSeqRes().size());
 			int nbr = 1;
 			for(Genom gTemp : dataController.getSeqRes()) {
