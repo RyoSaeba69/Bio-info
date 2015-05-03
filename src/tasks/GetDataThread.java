@@ -133,7 +133,7 @@ public class GetDataThread extends Thread {
 				//dataController.setSeqRes(this.getUtilClient().efetchGenomsByIds(dataController.getAllIds()));
 				dataController.setSeqRes(this.getUtilClient().efetchAllGenomsByIds(dataController.getAllIds()));
 				
-				System.out.println("Fin de la récuperation des donnees " + this.getResearchName());
+				System.out.println("Fin de la recuperation des donnees " + this.getResearchName());
 				System.out.println("Debut traitement des donnees " + this.getResearchName());
 				ProgressBarPanel.setMaximumProgressBar(dataController.getSeqRes().size());
 				int nbr = 1;

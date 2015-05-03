@@ -349,7 +349,7 @@ public class EUtilClient {
 	            allXml.add(sendGet(resturl));
 	            i += fetchSize;
 	        }
-	        System.out.println("Fin FetchSeqById");
+	        //System.out.println("Fin FetchSeqById");
     	} catch(Exception e) {
     		try {
     			System.out.println("Erreur, relance de la fonction : " + e);
