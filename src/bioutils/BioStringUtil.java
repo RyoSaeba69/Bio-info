@@ -46,7 +46,15 @@ public class BioStringUtil {
     }
 
     public static String complement (String seq){
-        return seq;
+
+        String strComp = seq.toUpperCase()
+                .replaceAll("A", "t")
+                .replaceAll("G", "c")
+                .replaceAll("C", "g")
+                .replaceAll("T", "a")
+                .toUpperCase();
+
+        return strComp;
     }
 
     public static String complement(Vector<HashMap<String, Integer>> intervals, String sSeq){
