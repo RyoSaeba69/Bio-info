@@ -1,11 +1,6 @@
 package tasks;
 
 import ihm.ProgressBarPanel;
-
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-import java.lang.management.ThreadMXBean;
-
 import models.Genom;
 import controllers.DataController;
 import erest.BioHashMap;
@@ -115,18 +110,6 @@ public class GetDataThread extends Thread {
 			//Test
 			ProgressBarPanel.setProgressBarValue(1);
 			
-			RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
-			 
-			String jvmName = runtimeBean.getName();
-			System.out.println("JVM Name = " + jvmName);
-			long pid = Long.valueOf(jvmName.split("@")[0]);
-			System.out.println("JVM PID  = " + pid);
-	 
-			ThreadMXBean bean = ManagementFactory.getThreadMXBean();
-	 
-			int peakThreadCount = bean.getPeakThreadCount();
-			System.out.println("Peak Thread Count = " + peakThreadCount);
-			
 			for(int i = 0; nbExec < 0 || i < nbExec; i++) {
 				System.out.println("Recuperation des donnees "+this.getResearchName()+", veuillez patienter...");
 				dataController.setAllIds(this.getUtilClient().esearchAllId(this.getResearchName(), this.getOpts()));
@@ -146,6 +129,7 @@ public class GetDataThread extends Thread {
 			}
 			System.out.println("FIN RUN GetDataThread s'occupant de la recherche : " + this.getResearchName());
 			this.setFinish(true);
+			System.gc();
 			ThreadManager.getEndProgramme();
 		} catch(Exception e) {
 			System.out.println("Le Thread s'occupant de la recherche des " + this.getResearchName() + " a rencontre une erreur : " + e);

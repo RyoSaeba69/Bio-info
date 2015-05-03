@@ -137,7 +137,7 @@ public class Genom {
                 filePath = newExcelFile.getParent() + fileSeparator + this.organism + "("+this.getSeq_locus()+")" + "("+new File(newExcelFile.getParent()).listFiles().length+")"+excelExt;
             }
 
-            gs.setPath(basePath);
+            gs.setPath(this.taxonomy.replaceAll(taxonomySeparator, fileSeparator));
 
             try {
                 FileOutputStream newStatFile = new FileOutputStream(filePath);

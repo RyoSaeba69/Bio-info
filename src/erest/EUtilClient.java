@@ -430,13 +430,26 @@ public class EUtilClient {
             BufferedReader br = new BufferedReader(new InputStreamReader((xmlresponse)));
             String output;
             while ((output = br.readLine()) != null) {
-                repsonse.append(output);
+            	try {
+            		repsonse.append(output);
+            	} catch (OutOfMemoryError  e) {
+            		System.err.println("Erreur dans sendGet ! \n" + e);
+            		e.printStackTrace();
+            		try {
+                    	System.out.println("Veuillez patienter, relance dans 5 secondes...");
+        				Thread.sleep(5000);
+        			} catch (InterruptedException e1) {
+        				// TODO Auto-generated catch block
+        				e1.printStackTrace();
+        			}
+            	}
             }
             br.close();
         } catch (Exception e) {
             System.out.println("Exception:" + e);
             e.printStackTrace();
             try {
+            	System.out.println("Veuillez patienter, relance dans 5 secondes...");
 				Thread.sleep(5000);
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
@@ -446,6 +459,7 @@ public class EUtilClient {
         } finally {
             connection.disconnect();
         }
+        System.gc();
         //System.out.println("repsonse.toString(): " + repsonse.toString());
         return repsonse.toString();
     }

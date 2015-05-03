@@ -20,6 +20,7 @@ public class bioProject extends Application {
 	public static MainFenetre ihm;
 
 	public static void main(String[] args){
+
 		initInformation();
 		ihm = new MainFenetre();
 		new SysTrayIcon();
@@ -36,6 +37,7 @@ public class bioProject extends Application {
 	private static void initData() {
 		Vector<String> genes = new Vector<String>();
 		genes.add("eukaryota");
+		//genes.add("bacteria");
 		genes.add("viruses");
 		genes.add("virus");
 		genes.add("plasmid");
@@ -47,8 +49,6 @@ public class bioProject extends Application {
 		genes.add("mitochondria");
 
 		genes.add("prokaryota");
-
-
 
 		ThreadManager = new ThreadManager(genes);
 		
