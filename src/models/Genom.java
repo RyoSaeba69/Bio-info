@@ -132,6 +132,12 @@ public class Genom {
 
 //            String filePath = basePath + fileSeparator + this.organism + excelExt;
             String filePath = basePath + fileSeparator + this.organism +"("+this.getSeq_locus()+")" + excelExt;
+                    
+            String allFilePath = statsDirectory + fileSeparator + "allResults"; 
+            new File(allFilePath).mkdirs();
+            
+            String secondFilePath = allFilePath + fileSeparator + this.organism +"("+this.getSeq_locus()+")" + excelExt;
+            
             File newExcelFile =  new File(filePath);
             if(newExcelFile.exists()){
                 filePath = newExcelFile.getParent() + fileSeparator + this.organism + "("+this.getSeq_locus()+")" + "("+new File(newExcelFile.getParent()).listFiles().length+")"+excelExt;
@@ -142,6 +148,8 @@ public class Genom {
             try {
                 FileOutputStream newStatFile = new FileOutputStream(filePath);
                 genExcelFile(gs, newStatFile);
+                FileOutputStream secondStatFile = new FileOutputStream(secondFilePath);
+                genExcelFile(gs, secondStatFile);
             } catch (Exception e) {
                 e.printStackTrace();
             }
