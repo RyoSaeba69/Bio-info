@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import com.sun.tools.javac.jvm.Gen;
 import erest.BioHashMap;
 
 /**
@@ -29,6 +30,30 @@ public class GenStats {
     private HashMap<String, TriInfo> ph1Trinucleotide;
     private HashMap<String, TriInfo> ph2Trinucleotide;
 
+
+    public static GenStats newEmptyGs(){
+        GenStats newGs = new GenStats();
+        newGs.setName("");
+        newGs.setPath("");
+        newGs.setNbCds(0);
+        newGs.setNbTrinucleotide(0);
+        newGs.setUnUsedCds(0);
+        newGs.setPh0Total(0);
+        newGs.setPh1Total(0);
+        newGs.setPh2Total(0);
+        newGs.setTotalTrinucleotide(0);
+        newGs.setTotalHmRes(0);
+
+//        Vector<HashMap<String, TriInfo>> allPhases = new Vector<HashMap<String, TriInfo>>();
+//        for(int p = 0; p < 3;p++) {
+//            HashMap<String, TriInfo> hmRes = Genom.genCountTri(p, "");
+//
+//            allPhases.add(hmRes);
+//        }
+//        newGs.addNewPhTrinucleotide(allPhases);
+
+        return newGs;
+    }
 
     public void addSeq(String usedSeq){
         this.usedSequence.add(usedSeq);
@@ -208,6 +233,23 @@ public class GenStats {
         }
 
         return hmRes;
+    }
+
+    public void mergeWith(GenStats gsToMerge){
+//        this.name = gsToMerge.getName();
+//        this.path = gsToMerge.getPath();
+        this.nbCds += gsToMerge.getNbCds();
+        this.nbTrinucleotide += gsToMerge.getNbTrinucleotide();
+        this.unUsedCds += gsToMerge.getUnUsedCds();
+        this.ph0Total += gsToMerge.getPh0Total();
+        this.ph1Total += gsToMerge.getPh1Total();
+        this.ph2Total += gsToMerge.getPh2Total();
+        this.totalTrinucleotide += gsToMerge.getTotalTrinucleotide();
+        this.totalHmRes += gsToMerge.getTotalHmRes();
+
+            for(Vector<HashMap<String, TriInfo>> allHm : gsToMerge.phTrinucleotide){
+                this.addNewPhTrinucleotide(allHm);
+            }
     }
 
 }

@@ -125,25 +125,48 @@ public class Genom {
             String excelExt = ".xls";
             String taxonomySeparator = "; ";
             String statsDirectory = FileController.getFichier().getAbsolutePath() + fileSeparator;
-            String basePath = statsDirectory + this.taxonomy.replaceAll(taxonomySeparator, fileSeparator);
+            String basePath = statsDirectory + this.taxonomy.replaceAll("/", "|").replaceAll(taxonomySeparator, fileSeparator);
             File newDirectories = new File(basePath);
 
             newDirectories.mkdirs();
 
+            String escapedSeqLocus = this.getSeq_locus().replaceAll("/", "|");
+            String escapedOrganism = this.getOrganism().replaceAll("/", "|");
+
 //            String filePath = basePath + fileSeparator + this.organism + excelExt;
-            String filePath = basePath + fileSeparator + this.organism +"("+this.getSeq_locus()+")" + excelExt;
+            String filePath = basePath + fileSeparator + escapedOrganism +"("+escapedSeqLocus+")" + excelExt;
                     
             String allFilePath = statsDirectory + fileSeparator + "allResults"; 
             new File(allFilePath).mkdirs();
             
-            String secondFilePath = allFilePath + fileSeparator + this.organism +"("+this.getSeq_locus()+")" + excelExt;
+            String secondFilePath = allFilePath + fileSeparator + escapedOrganism +"("+escapedSeqLocus+")" + excelExt;
             
             File newExcelFile =  new File(filePath);
             if(newExcelFile.exists()){
-                filePath = newExcelFile.getParent() + fileSeparator + this.organism + "("+this.getSeq_locus()+")" + "("+new File(newExcelFile.getParent()).listFiles().length+")"+excelExt;
+                filePath = newExcelFile.getParent() + fileSeparator + escapedOrganism + "("+escapedSeqLocus+")" + "("+new File(newExcelFile.getParent()).listFiles().length+")"+excelExt;
             }
 
             gs.setPath(this.taxonomy.replaceAll(taxonomySeparator, fileSeparator));
+
+
+//            try {
+//                File tmpFirstFile = new File(filePath);
+//                tmpFirstFile.getParentFile().mkdirs();
+//                tmpFirstFile.createNewFile();
+//
+//                File tmpSecondFile = new File(secondFilePath);
+//                tmpSecondFile.getParentFile().mkdirs();
+//
+//                tmpSecondFile.createNewFile();
+//            } catch (Exception e){
+//                e.printStackTrace();
+//            }
+//
+            String currentPath = "";
+            for(String p : gs.getPath().split("/")){
+                currentPath += "/" + p;
+                GlobalGs.getCurrentGlobalGs().addStats(currentPath, gs);
+            }
 
             try {
                 FileOutputStream newStatFile = new FileOutputStream(filePath);
@@ -206,7 +229,7 @@ public class Genom {
         return vCdsFeature;
     }
 
-    public HashMap<String, TriInfo> genCountTri(int phase, String sSeq){
+    public static HashMap<String, TriInfo> genCountTri(int phase, String sSeq){
 
         Vector<String> phasedVSeq = Sequence.findVseqByPhase(phase, sSeq.toLowerCase());
 
@@ -398,9 +421,6 @@ public class Genom {
         totalRow.createCell(4).setCellValue(100);
         totalRow.createCell(5).setCellValue(gs.getTotalHmRes());
         totalRow.createCell(6).setCellValue(100);
-
-
-
 
         workbook.write(excelFile);
         excelFile.close();

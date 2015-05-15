@@ -17,6 +17,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import fetchclass.ElinkResult;
 import models.Genom;
 import models.Genoms;
 
@@ -38,7 +39,7 @@ public class EUtilClient {
     private static final String EUTIL_API_ESEARCH_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?";
     private static final String EUTIL_API_ESUMMARY_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?";
     @SuppressWarnings("unused")
-	private static final String EUTIL_API_ELINK_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?";
+	private static final String EUTIL_API_ELINK_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom=genome&db=nuccore";
     private static final String EUTIL_API_EFETCH_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?";
     private static final String FETCH_PARAMETER = "db=nuccore&retmode=xml&rettype=gb";
     private static final String CONST_PARAMETERS = "db=genome&retmode=xml&rettype=gb";//&tool=adfeutils&email=fangx%40mskcc.org";
@@ -46,6 +47,8 @@ public class EUtilClient {
 
     public EUtilClient() {
     }
+
+
 
     @SuppressWarnings("unchecked")
 	public List<EFetch> eFetchTitleByGi(String gi) {
@@ -294,6 +297,28 @@ public class EUtilClient {
         return sendGet(resturl);
     }
 
+    public String elinkBySearchIds(Vector<String> ids){
+        BioHashMap<String, String> options = new BioHashMap<String, String>();
+        options.put("id", StringUtils.join(ids.subList(0, 900), ","));
+//        options.put("id", StringUtils.join(ids, ","));
+       // String parameters = FETCH_PARAMETER;
+        String resturl = EUTIL_API_ELINK_URL /*+ parameters*/ + options.toBioParameters();
+
+        return sendGet(resturl);
+    }
+
+    public ElinkResult elinkLinkBySearchIds(Vector<String> ids){
+        ElinkResult elr = null;
+        try {
+            String xmlResult = this.elinkBySearchIds(ids);
+            elr = (ElinkResult) BioXMLUtils.XMLToClass(xmlResult, ElinkResult.class);
+        } catch(Exception e) {
+            System.out.println("error : " + e);
+            e.printStackTrace();
+        }
+        return elr;
+    }
+
     public String efetchSeqByIds(Vector<String> ids){
         BioHashMap<String, String> options = new BioHashMap<String, String>();
 //        options.put("id", StringUtils.join(ids.subList(0, 1000), ","));
@@ -325,7 +350,7 @@ public class EUtilClient {
 	
 	        BioHashMap<String, String> options = new BioHashMap<String, String>();
 	
-	        int i = 0, fetchSize = 1000;
+	        int i = 0, fetchSize = 100;
 	        @SuppressWarnings("unused")
 			int realFetchSize = fetchSize;
 	        List<String> subIds;
