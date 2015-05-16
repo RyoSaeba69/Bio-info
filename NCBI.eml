@@ -3,4 +3,7 @@
 	<output-test url="file://$MODULE_DIR$/out/test/NCBI"/>
 	<exclude-output/>
 	<contentEntry url="file://$MODULE_DIR$"/>
+	<levels>
+		<level name="poi-3.11-20141221" value="project"/>
+	</levels>
 </component>

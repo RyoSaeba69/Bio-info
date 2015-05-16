@@ -32,8 +32,6 @@ public class GlobalGs {
     }
 
     public void addStats(String path, GenStats gs){
-
-
         if(!this.allGs.containsKey(path)){
              this.allGs.put(path, GenStats.newEmptyGs());
         }

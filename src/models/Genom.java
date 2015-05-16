@@ -114,6 +114,7 @@ public class Genom {
     public void createStatsAndFiles(){
         GenStats gs = this.generateStats();
         this.createFiles(gs);
+        gs = null;
     }
 
     public void createFiles(GenStats gs){
@@ -121,7 +122,7 @@ public class Genom {
         if(gs.isUsable()) {
 
             String fileSeparator = "/";
-            String as = new String ("\\");
+            String as = new String ("\\\\");
 
             String excelExt = ".xls";
             String taxonomySeparator = "; ";
@@ -148,21 +149,6 @@ public class Genom {
             }
 
             gs.setPath(this.taxonomy.replaceAll(taxonomySeparator, fileSeparator));
-
-
-//            try {
-//                File tmpFirstFile = new File(filePath);
-//                tmpFirstFile.getParentFile().mkdirs();
-//                tmpFirstFile.createNewFile();
-//
-//                File tmpSecondFile = new File(secondFilePath);
-//                tmpSecondFile.getParentFile().mkdirs();
-//
-//                tmpSecondFile.createNewFile();
-//            } catch (Exception e){
-//                e.printStackTrace();
-//            }
-//
             String currentPath = "";
             for(String p : gs.getPath().split("/")){
                 currentPath += "/" + p;
@@ -207,6 +193,7 @@ public class Genom {
                         PrintWriter outSeq = new PrintWriter(newGeneDirectory.getAbsolutePath() + fileSeparator + geneSeqFileName);
                         outSeq.println(gs.getUsedSequence().get(i));
                         outSeq.close();
+                        outSeq = null;
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -214,8 +201,10 @@ public class Genom {
             }
             //END GENE
 
+            newDirectories = null;
+            newExcelFile = null;
+            newGenomDirectory = null;
         }
-
     }
 
     public Vector<Feature> findCDSFeatures(){
