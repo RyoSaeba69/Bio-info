@@ -7,14 +7,19 @@ import models.Genom;
 public class DataController {
 	
 	/**
-	 * La liste des IDs récupérés lors de la recherche
+	 * La liste des IDs rï¿½cupï¿½rï¿½s lors de la recherche
 	 */
 	private Vector<String> allIds;
 	/**
-	 * La liste des Génoms correspondant aux IDs
+	 * La liste des Gï¿½noms correspondant aux IDs
 	 * @see #allIds
 	 */
 	private Vector<Genom> seqRes;
+
+	/**
+	 * La liste des ids links
+	 */
+	private Vector<String> allLinkIds;
 	
 	/**
 	 * Constructeur du DataController
@@ -39,5 +44,12 @@ public class DataController {
 	public void setSeqRes(Vector<Genom> seqRes) {
 		this.seqRes = seqRes;
 	}
-	
+
+	public Vector<String> getAllLinkIds() {
+		return allLinkIds;
+	}
+
+	public void setAllLinkIds(Vector<String> allLinkIds) {
+		this.allLinkIds = allLinkIds;
+	}
 }

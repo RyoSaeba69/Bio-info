@@ -1,10 +1,12 @@
 package tasks;
 
+import fetchclass.ElinkResult;
 import ihm.ProgressBarPanel;
 import models.Genom;
 import controllers.DataController;
 import erest.BioHashMap;
 import erest.EUtilClient;
+import models.GlobalGs;
 
 public class GetDataThread extends Thread {
 
@@ -114,8 +116,12 @@ public class GetDataThread extends Thread {
 				System.out.println("Recuperation des donnees "+this.getResearchName()+", veuillez patienter...");
 				dataController.setAllIds(this.getUtilClient().esearchAllId(this.getResearchName(), this.getOpts()));
 				//dataController.setSeqRes(this.getUtilClient().efetchGenomsByIds(dataController.getAllIds()));
-				dataController.setSeqRes(this.getUtilClient().efetchAllGenomsByIds(dataController.getAllIds()));
-				
+				ElinkResult resLink = this.getUtilClient().elinkLinkBySearchIds(dataController.getAllIds());
+				dataController.setAllLinkIds(resLink.getAllLinkIds());
+
+				dataController.setSeqRes(this.getUtilClient().efetchAllGenomsByIds(dataController.getAllLinkIds()));
+
+
 				System.out.println("Fin de la recuperation des donnees " + this.getResearchName());
 				System.out.println("Debut traitement des donnees " + this.getResearchName());
 				ProgressBarPanel.setMaximumProgressBar(dataController.getSeqRes().size());
@@ -125,6 +131,9 @@ public class GetDataThread extends Thread {
 					//System.out.println("TRACE : "+ gTemp.toString());
 					gTemp.createStatsAndFiles();
 				}
+
+				GlobalGs.getCurrentGlobalGs().genGLobalExcels();
+
 				//System.out.println("Test Sequences : " + dataController.getSeqRes().toString());
 			}
 			System.out.println("FIN RUN GetDataThread s'occupant de la recherche : " + this.getResearchName());

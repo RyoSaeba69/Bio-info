@@ -36,19 +36,19 @@ public class bioProject extends Application {
 	
 	private static void initData() {
 		Vector<String> genes = new Vector<String>();
-		genes.add("eukaryota");
+	//	genes.add("eukaryota");
 		//genes.add("bacteria");
 		genes.add("viruses");
-		genes.add("virus");
-		genes.add("plasmid");
-		genes.add("plasmids");
-
-		genes.add("archaea");
-		genes.add("chloroplast");
-		genes.add("chloroplasts");
-		genes.add("mitochondria");
-
-		genes.add("prokaryota");
+//		genes.add("virus");
+//		genes.add("plasmid");
+//		genes.add("plasmids");
+//
+//		genes.add("archaea");
+//		genes.add("chloroplast");
+//		genes.add("chloroplasts");
+//		genes.add("mitochondria");
+//
+//		genes.add("prokaryota");
 
 		ThreadManager = new ThreadManager(genes);
 		
