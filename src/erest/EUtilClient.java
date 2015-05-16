@@ -17,7 +17,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import fetchclass.ElinkResult;
 import models.Genom;
 import models.Genoms;
 
@@ -32,13 +31,13 @@ import bioutils.BioXMLUtils;
 import com.sun.deploy.util.StringUtils;
 
 import fetchclass.ESearchId;
+import fetchclass.ElinkResult;
 
 
 public class EUtilClient {
 
     private static final String EUTIL_API_ESEARCH_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?";
     private static final String EUTIL_API_ESUMMARY_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?";
-    @SuppressWarnings("unused")
 	private static final String EUTIL_API_ELINK_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom=genome&db=nuccore";
     private static final String EUTIL_API_EFETCH_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?";
     private static final String FETCH_PARAMETER = "db=nuccore&retmode=xml&rettype=gb";
@@ -350,9 +349,7 @@ public class EUtilClient {
 	
 	        BioHashMap<String, String> options = new BioHashMap<String, String>();
 	
-	        int i = 0, fetchSize = 100;
-	        @SuppressWarnings("unused")
-			int realFetchSize = fetchSize;
+	        int i = 0, fetchSize = 50;
 	        List<String> subIds;
 	
 	        while(i <= ids.size()) {
@@ -374,12 +371,14 @@ public class EUtilClient {
 	            allXml.add(sendGet(resturl));
 	            i += fetchSize;
 	        }
+	        options = null;
+	        System.gc();
 	        //System.out.println("Fin FetchSeqById");
     	} catch(Exception e) {
     		try {
     			System.out.println("Erreur, relance de la fonction : " + e);
 				Thread.sleep(5000);
-				efetchAllSeqByIds(ids);
+				allXml = efetchAllSeqByIds(ids);
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -391,13 +390,19 @@ public class EUtilClient {
     public Vector<Genom> efetchAllGenomsByIds(Vector<String> ids){
         Genoms genoms = new Genoms();
         Vector<Genom> allGenoms = new Vector<Genom>();
+        Vector<String> allXml = new Vector<String>();
         try {
-            Vector<String> allXml = this.efetchAllSeqByIds(ids);
+//        	for(String id : ids) {
+//        		allXml.add(this.efetchSeqById(id));
+//        	}
+            allXml = this.efetchAllSeqByIds(ids);
             for(String xmlResult : allXml) {
                 genoms = (Genoms) BioXMLUtils.XMLToClass(xmlResult, Genoms.class);
                 if(genoms != null){
-                allGenoms.addAll(genoms.getAllGenoms());
-                    }
+                	allGenoms.addAll(genoms.getAllGenoms());
+                }
+                xmlResult = null;
+                System.gc();
             }
         } catch(Exception e) {
             System.out.println("error : " + e);

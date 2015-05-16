@@ -120,7 +120,11 @@ public class GetDataThread extends Thread {
 				dataController.setAllLinkIds(resLink.getAllLinkIds());
 
 				dataController.setSeqRes(this.getUtilClient().efetchAllGenomsByIds(dataController.getAllLinkIds()));
-
+				
+				resLink = null;
+				dataController.setAllLinkIds(null);
+				dataController.setAllIds(null);
+				System.gc();
 
 				System.out.println("Fin de la recuperation des donnees " + this.getResearchName());
 				System.out.println("Debut traitement des donnees " + this.getResearchName());
@@ -137,6 +141,7 @@ public class GetDataThread extends Thread {
 				//System.out.println("Test Sequences : " + dataController.getSeqRes().toString());
 			}
 			System.out.println("FIN RUN GetDataThread s'occupant de la recherche : " + this.getResearchName());
+			dataController.setSeqRes(null);
 			this.setFinish(true);
 			System.gc();
 			ThreadManager.getEndProgramme();

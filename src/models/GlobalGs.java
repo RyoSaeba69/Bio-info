@@ -1,11 +1,10 @@
 package models;
 
-import controllers.FileController;
-
-import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import controllers.FileController;
 
 /**
  * Created by antoine on 5/15/15.

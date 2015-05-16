@@ -38,8 +38,15 @@ public final class BioXMLUtils {
 
             res = unmarshaller.unmarshal(source);
         } catch(Exception e){
+        	try {
+        		System.out.println("Probleme dans la fonction XMLToClass relance dans 5 secondes : \n"+e);
+				Thread.sleep(5000);
+				res = XMLToClass(xmlString, classType);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
 //            e.printStackTrace();
-            return null;
+            return res;
         }
 
         return res;
