@@ -28,9 +28,18 @@ public class Genoms {
     public void setAllGenoms(Vector<Genom> allGenoms) {
         this.allGenoms = allGenoms;
     }
+
+    public void clearGenoms(){
+        this.allGenoms.clear();
+    }
     
     @Override
 	public String toString() {
 		return "Genoms [allGenoms=" + allGenoms + "]";
 	}
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+    }
 }

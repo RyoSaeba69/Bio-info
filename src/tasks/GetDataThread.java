@@ -8,6 +8,8 @@ import erest.BioHashMap;
 import erest.EUtilClient;
 import models.GlobalGs;
 
+import java.util.Vector;
+
 public class GetDataThread extends Thread {
 
 	/**
@@ -113,27 +115,42 @@ public class GetDataThread extends Thread {
 			ProgressBarPanel.setProgressBarValue(1);
 			
 			for(int i = 0; nbExec < 0 || i < nbExec; i++) {
-				System.out.println("Recuperation des donnees "+this.getResearchName()+", veuillez patienter...");
+				System.out.println("Recuperation des donnees " + this.getResearchName() + ", veuillez patienter...");
 				dataController.setAllIds(this.getUtilClient().esearchAllId(this.getResearchName(), this.getOpts()));
 				//dataController.setSeqRes(this.getUtilClient().efetchGenomsByIds(dataController.getAllIds()));
-				ElinkResult resLink = this.getUtilClient().elinkLinkBySearchIds(dataController.getAllIds());
-				dataController.setAllLinkIds(resLink.getAllLinkIds());
+				dataController.setAllLinkIds(this.getUtilClient().elinkLinkBySearchIds(dataController.getAllIds()));
+//				dataController.setSeqRes(this.getUtilClient().efetchAllGenomsByIds(dataController.getAllLinkIds()));
 
-				dataController.setSeqRes(this.getUtilClient().efetchAllGenomsByIds(dataController.getAllLinkIds()));
-				
-				resLink = null;
-				dataController.setAllLinkIds(null);
-				dataController.setAllIds(null);
-				System.gc();
 
 				System.out.println("Fin de la recuperation des donnees " + this.getResearchName());
 				System.out.println("Debut traitement des donnees " + this.getResearchName());
-				ProgressBarPanel.setMaximumProgressBar(dataController.getSeqRes().size());
+				ProgressBarPanel.setMaximumProgressBar(dataController.getAllLinkIds().size());
 				int nbr = 1;
-				for(Genom gTemp : dataController.getSeqRes()) {
-					ProgressBarPanel.setProgressBarValue(nbr);nbr++;
-					//System.out.println("TRACE : "+ gTemp.toString());
-					gTemp.createStatsAndFiles();
+
+				int computeGenomSize = 50;
+				for(int li = 0; li < dataController.getAllLinkIds().size();li += computeGenomSize) {
+
+					int realGenomSize = computeGenomSize;
+					if (li + computeGenomSize >= dataController.getAllLinkIds().size()) {
+						realGenomSize = dataController.getAllLinkIds().size() - li;
+					}
+
+					Vector<String> subVectors = new Vector(dataController.getAllLinkIds().subList(li, li+realGenomSize));
+
+					Vector<Genom> allGenoms = this.getUtilClient().efetchAllGenomsByIds(subVectors);
+					for (Genom gTemp : allGenoms) {
+						ProgressBarPanel.setProgressBarValue(nbr);
+						nbr++;
+						//System.out.println("TRACE : "+ gTemp.toString());
+						gTemp.createStatsAndFiles();
+						gTemp = null;
+					}
+
+					subVectors.clear();
+					allGenoms.clear();
+					allGenoms = null;
+					subVectors = null;
+					System.gc();
 				}
 
 				GlobalGs.getCurrentGlobalGs().genGLobalExcels();
@@ -147,6 +164,7 @@ public class GetDataThread extends Thread {
 			ThreadManager.getEndProgramme();
 		} catch(Exception e) {
 			System.out.println("Le Thread s'occupant de la recherche des " + this.getResearchName() + " a rencontre une erreur : " + e);
+			e.printStackTrace();
 			this.setFinish(true);
 		}
 	}

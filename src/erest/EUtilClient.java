@@ -296,26 +296,45 @@ public class EUtilClient {
         return sendGet(resturl);
     }
 
-    public String elinkBySearchIds(Vector<String> ids){
+    public Vector<String> elinkBySearchIds(Vector<String> ids){
+        Vector<String> allXml = new Vector<String>();
         BioHashMap<String, String> options = new BioHashMap<String, String>();
-        options.put("id", StringUtils.join(ids.subList(0, 900), ","));
+//        options.put("id", StringUtils.join(ids.subList(0, 900), ","));
 //        options.put("id", StringUtils.join(ids, ","));
        // String parameters = FETCH_PARAMETER;
-        String resturl = EUTIL_API_ELINK_URL /*+ parameters*/ + options.toBioParameters();
+        int linkSearchSize = 500;
+        for(int i = 0; i < ids.size();i += linkSearchSize){
 
-        return sendGet(resturl);
+            int realSearchSize = linkSearchSize;
+            if(i + linkSearchSize >= ids.size()){
+                realSearchSize = ids.size() - i;
+            }
+
+            options.put("id", StringUtils.join(ids.subList(i, i+realSearchSize), ","));
+
+            String resturl = EUTIL_API_ELINK_URL /*+ parameters*/ + options.toBioParameters();
+            allXml.add(sendGet(resturl));
+
+        }
+
+        return allXml;
     }
 
-    public ElinkResult elinkLinkBySearchIds(Vector<String> ids){
-        ElinkResult elr = null;
+    public Vector<String> elinkLinkBySearchIds(Vector<String> ids){
+        Vector<String> linkIds = new Vector<String>();
+//        ElinkResult elr = null;
         try {
-            String xmlResult = this.elinkBySearchIds(ids);
-            elr = (ElinkResult) BioXMLUtils.XMLToClass(xmlResult, ElinkResult.class);
+            Vector<String> xmlResults = this.elinkBySearchIds(ids);
+
+            for(String xml : xmlResults) {
+                ElinkResult elr = (ElinkResult) BioXMLUtils.XMLToClass(xml, ElinkResult.class);
+                linkIds.addAll(elr.getAllLinkIds());
+            }
         } catch(Exception e) {
             System.out.println("error : " + e);
             e.printStackTrace();
         }
-        return elr;
+        return linkIds;
     }
 
     public String efetchSeqByIds(Vector<String> ids){
@@ -360,15 +379,17 @@ public class EUtilClient {
 	            } else {
 	               subIds = ids.subList(i, i + fetchSize);
 	            }
-	
-	            //System.out.println("Fetching subIds "+subIds.size()+" Genom files  ");
-	            options.put("id", StringUtils.join(subIds, ","));
-	            //System.out.println(options.toString());
-	
-	            String parameters = FETCH_PARAMETER;
-	            String resturl = EUTIL_API_EFETCH_URL + parameters + options.toBioParameters();
-	            //System.out.println("En attente d'une reponse serveur de la requete :\n " + resturl);
-	            allXml.add(sendGet(resturl));
+
+                if(subIds.size() > 0) {
+                    //System.out.println("Fetching subIds "+subIds.size()+" Genom files  ");
+                    options.put("id", StringUtils.join(subIds, ","));
+                    //System.out.println(options.toString());
+
+                    String parameters = FETCH_PARAMETER;
+                    String resturl = EUTIL_API_EFETCH_URL + parameters + options.toBioParameters();
+                    //System.out.println("En attente d'une reponse serveur de la requete :\n " + resturl);
+                    allXml.add(sendGet(resturl));
+                }
 	            i += fetchSize;
 	        }
 	        options = null;
@@ -388,22 +409,37 @@ public class EUtilClient {
     }
 
     public Vector<Genom> efetchAllGenomsByIds(Vector<String> ids){
-        Genoms genoms = new Genoms();
         Vector<Genom> allGenoms = new Vector<Genom>();
-        Vector<String> allXml = new Vector<String>();
         try {
-//        	for(String id : ids) {
-//        		allXml.add(this.efetchSeqById(id));
-//        	}
-            allXml = this.efetchAllSeqByIds(ids);
-            for(String xmlResult : allXml) {
-                genoms = (Genoms) BioXMLUtils.XMLToClass(xmlResult, Genoms.class);
-                if(genoms != null){
-                	allGenoms.addAll(genoms.getAllGenoms());
+//            int computeGenomSize = 300;
+//            for(int i = 0; i < ids.size();i += computeGenomSize){
+//
+//                int realGenomSize = computeGenomSize;
+//                if(i + computeGenomSize >= ids.size()){
+//                    realGenomSize = ids.size() - i;
+//                }
+
+                Genoms genoms = null;
+//                Vector<String> subVectors = new Vector(ids.subList(i, i+realGenomSize));
+                Vector<String> allXml = this.efetchAllSeqByIds(ids);
+//                subVectors = null;
+                for(String xmlResult : allXml) {
+                    genoms = (Genoms) BioXMLUtils.XMLToClass(xmlResult, Genoms.class);
+                    if(genoms != null){
+                        allGenoms.addAll(genoms.getAllGenoms());
+                        genoms.clearGenoms();
+                        genoms = null;
+                    }
+                    xmlResult = null;
                 }
-                xmlResult = null;
+
+//                allGenoms.clear();
+                allXml.clear();
+                allXml = null;
+
+
                 System.gc();
-            }
+//            }
         } catch(Exception e) {
             System.out.println("error : " + e);
             e.printStackTrace();
@@ -475,6 +511,8 @@ public class EUtilClient {
             	}
             }
             br.close();
+            br = null;
+            xmlresponse = null;
         } catch (Exception e) {
             System.out.println("Exception:" + e);
             e.printStackTrace();
@@ -489,9 +527,12 @@ public class EUtilClient {
         } finally {
             connection.disconnect();
         }
+        connection = null;
+        String res = repsonse.toString();
+        repsonse = null;
         System.gc();
         //System.out.println("repsonse.toString(): " + repsonse.toString());
-        return repsonse.toString();
+        return res;
     }
 
     public static void oneSecondDelay() {
