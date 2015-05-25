@@ -20,23 +20,25 @@ public final class BioXMLUtils {
         Object res = null;
 
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(classType);
-
-            SAXParserFactory spf = SAXParserFactory.newInstance();
-            spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-            spf.setFeature("http://xml.org/sax/features/validation", false);
-
-            StringReader reader = new StringReader(xmlString);
-
-
-            XMLReader xmlReader = spf.newSAXParser().getXMLReader();
-            InputSource inputSource = new InputSource(reader);
-
-            SAXSource source = new SAXSource(xmlReader, inputSource);
-
-            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-
-            res = unmarshaller.unmarshal(source);
+        	if(xmlString!=null) {
+	            JAXBContext jaxbContext = JAXBContext.newInstance(classType);
+	
+	            SAXParserFactory spf = SAXParserFactory.newInstance();
+	            spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+	            spf.setFeature("http://xml.org/sax/features/validation", false);
+	
+	            StringReader reader = new StringReader(xmlString);
+	
+	
+	            XMLReader xmlReader = spf.newSAXParser().getXMLReader();
+	            InputSource inputSource = new InputSource(reader);
+	
+	            SAXSource source = new SAXSource(xmlReader, inputSource);
+	
+	            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+	
+	            res = unmarshaller.unmarshal(source);
+        	}
         } catch(Exception e){
         	try {
         		System.out.println("Probleme dans la fonction XMLToClass relance dans 5 secondes : \n"+e);
