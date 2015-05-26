@@ -2,7 +2,6 @@ package models;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
@@ -223,7 +222,7 @@ public class Genom {
         return vCdsFeature;
     }
 
-    public static HashMap<String, TriInfo> genCountTri(int phase, String sSeq){
+    public HashMap<String, TriInfo> genCountTri(int phase, String sSeq){
 
         Vector<String> phasedVSeq = Sequence.findVseqByPhase(phase, sSeq.toLowerCase());
 

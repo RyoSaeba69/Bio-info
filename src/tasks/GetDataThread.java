@@ -1,14 +1,14 @@
 package tasks;
 
-import fetchclass.ElinkResult;
 import ihm.ProgressBarPanel;
+
+import java.util.Vector;
+
 import models.Genom;
+import models.GlobalGs;
 import controllers.DataController;
 import erest.BioHashMap;
 import erest.EUtilClient;
-import models.GlobalGs;
-
-import java.util.Vector;
 
 public class GetDataThread extends Thread {
 

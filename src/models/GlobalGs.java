@@ -1,7 +1,6 @@
 package models;
 
 import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,11 +10,11 @@ import controllers.FileController;
 /**
  * Created by antoine on 5/15/15.
  */
+@SuppressWarnings("serial")
 public class GlobalGs implements Serializable {
 
     public static String globalName = "global_stats.xls";
     private static GlobalGs instance = null;
-    private String path = null;
 
     public HashMap<String, GenStats> allGs;
 

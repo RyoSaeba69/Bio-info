@@ -1,16 +1,20 @@
 package models;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
-import com.sun.tools.javac.jvm.Gen;
 import erest.BioHashMap;
 
 /**
  * Created by antoine on 4/21/15.
  */
+@SuppressWarnings("serial")
 public class GenStats implements Serializable{
 
     private String name;
