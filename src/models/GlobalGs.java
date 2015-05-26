@@ -1,5 +1,6 @@
 package models;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -93,7 +94,16 @@ public class GlobalGs implements Serializable {
 //                }
 
             try {
-                Genom.genExcelFile(values.getValue(), new FileOutputStream(globalPath));
+                GenStats gs = GenStats.deserializeGs(GlobalGs.getFilePath(values.getKey()));
+//                if(gs != null) {
+                    Genom.genExcelFile(gs, new FileOutputStream(globalPath));
+                    gs = null;
+                    File fileToDel = new File(GlobalGs.getFilePath(values.getKey()));
+                    fileToDel.delete();
+                    fileToDel = null;
+
+                    System.gc();
+//                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -27,7 +27,9 @@ public class GenStats implements Serializable{
     private int ph2Total;
     private int totalTrinucleotide;
     private int totalHmRes;
+    private boolean isEdited = false;
     private Vector<String> usedSequence = new Vector<String>();
+    private Vector<HashMap<String, TriInfo>> atcHM;
 
     private Vector<Vector<HashMap<String, TriInfo>>> phTrinucleotide;
 
@@ -74,6 +76,14 @@ public class GenStats implements Serializable{
 
     public GenStats() {
         this.phTrinucleotide = new Vector<Vector<HashMap<String, TriInfo>>>();
+
+        this.atcHM = new Vector<HashMap<String, TriInfo>>();
+        for(int i =0; i < 3;i++){
+            this.atcHM.add(new HashMap<String, TriInfo>());
+            for(String triKey : BioHashMap.initVector){
+                this.atcHM.get(i).put(triKey, new TriInfo());
+            }
+        }
     }
 
     public String getName() {
@@ -189,40 +199,68 @@ public class GenStats implements Serializable{
     }
 
     public void addNewPhTrinucleotide(Vector<HashMap<String, TriInfo>> newPhTri){
-        this.phTrinucleotide.add(newPhTri);
+//        this.phTrinucleotide.add(newPhTri);
+
+        this.isEdited = true;
+        for(int i = 0; i < 3; i++){
+                HashMap<String, TriInfo> currentHm = newPhTri.get(i);
+                for(Map.Entry<String, TriInfo> mValue : currentHm.entrySet()){
+                    int newCountTri = mValue.getValue().getPhCount() + this.atcHM.get(i).get(mValue.getKey()).getPhCount();
+                    this.atcHM.get(i).get(mValue.getKey()).setPhCount(newCountTri);
+                }
+        }
+
     }
 
 
     public boolean isUsable(){
-        return this.phTrinucleotide != null && this.phTrinucleotide.size() > 0;
+        return this.isEdited;
+//        return this.phTrinucleotide != null && this.phTrinucleotide.size() > 0;
     }
 
     public Vector<HashMap<String, TriInfo>> computeAllTrinucleotide(){
 
-        Vector<HashMap<String, TriInfo>> hmRes = new Vector<HashMap<String, TriInfo>>();
+//        Vector<HashMap<String, TriInfo>> hmRes = new Vector<HashMap<String, TriInfo>>();
+//
+//        for(int i =0; i < 3;i++){
+//            HashMap<String, TriInfo> newHm = new HashMap<String, TriInfo>();
+//            for(String triKey : BioHashMap.initVector){
+//                newHm.put(triKey, new TriInfo());
+//            }
+//            hmRes.add(newHm);
+//        }
+//
+//        for(int i = 0; i < 3; i++){
+//            for(Vector<HashMap<String, TriInfo>> allHm : this.phTrinucleotide){
+//                HashMap<String, TriInfo> currentHm = allHm.get(i);
+//                for(Map.Entry<String, TriInfo> mValue : currentHm.entrySet()){
+//                    int newCountTri = mValue.getValue().getPhCount() + hmRes.get(i).get(mValue.getKey()).getPhCount();
+//                    hmRes.get(i).get(mValue.getKey()).setPhCount(newCountTri);
+//                }
+//            }
+//        }
+//
+//        Vector<TriInfo> allValues = new Vector<TriInfo>();
+//        allValues.addAll(hmRes.get(0).values());
+//
+//        double total = 0.0;
+//        for(TriInfo t : allValues){
+//            total += t.getPhCount();
+//        }
+//
+//        this.totalHmRes = (int) total;
+//
+//        for(HashMap<String, TriInfo> curHm : hmRes){
+//            for(Map.Entry<String, TriInfo> meValue : curHm.entrySet()) {
+//                double percentage = (meValue.getValue().getPhCount() / total) * 100.0;
+//                meValue.getValue().setPbCount(percentage);
+//            }
+//        }
 
-        for(int i =0; i < 3;i++){
-            HashMap<String, TriInfo> newHm = new HashMap<String, TriInfo>();
-            for(String triKey : BioHashMap.initVector){
-                newHm.put(triKey, new TriInfo());
-            }
-            hmRes.add(newHm);
-        }
-
-
-
-        for(int i = 0; i < 3; i++){
-            for(Vector<HashMap<String, TriInfo>> allHm : this.phTrinucleotide){
-                HashMap<String, TriInfo> currentHm = allHm.get(i);
-                for(Map.Entry<String, TriInfo> mValue : currentHm.entrySet()){
-                    int newCountTri = mValue.getValue().getPhCount() + hmRes.get(i).get(mValue.getKey()).getPhCount();
-                    hmRes.get(i).get(mValue.getKey()).setPhCount(newCountTri);
-                }
-            }
-        }
+//        return hmRes;
 
         Vector<TriInfo> allValues = new Vector<TriInfo>();
-        allValues.addAll(hmRes.get(0).values());
+        allValues.addAll(this.atcHM.get(0).values());
 
         double total = 0.0;
         for(TriInfo t : allValues){
@@ -231,14 +269,16 @@ public class GenStats implements Serializable{
 
         this.totalHmRes = (int) total;
 
-        for(HashMap<String, TriInfo> curHm : hmRes){
+        for(HashMap<String, TriInfo> curHm : this.atcHM){
             for(Map.Entry<String, TriInfo> meValue : curHm.entrySet()) {
                 double percentage = (meValue.getValue().getPhCount() / total) * 100.0;
                 meValue.getValue().setPbCount(percentage);
             }
         }
 
-        return hmRes;
+
+        return this.atcHM;
+
     }
 
     public void mergeWith(GenStats gsToMerge){
@@ -253,9 +293,11 @@ public class GenStats implements Serializable{
         this.totalTrinucleotide += gsToMerge.getTotalTrinucleotide();
         this.totalHmRes += gsToMerge.getTotalHmRes();
 
-            for(Vector<HashMap<String, TriInfo>> allHm : gsToMerge.phTrinucleotide){
-                this.addNewPhTrinucleotide(allHm);
-            }
+//            for(Vector<HashMap<String, TriInfo>> allHm : gsToMerge.phTrinucleotide){
+//                this.addNewPhTrinucleotide(allHm);
+//            }
+
+        this.addNewPhTrinucleotide(gsToMerge.atcHM);
     }
 
     public void serializeGs(){
