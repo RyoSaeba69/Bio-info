@@ -122,18 +122,17 @@ public class Genom {
         if(gs.isUsable()) {
 
             String fileSeparator = "/";
-            String as = new String ("\\\\");
 
             String excelExt = ".xls";
             String taxonomySeparator = "; ";
             String statsDirectory = FileController.getFichier().getAbsolutePath() + fileSeparator;
-            String basePath = statsDirectory + this.taxonomy.replaceAll("/", "|").replaceAll(as,"|").replaceAll(taxonomySeparator, fileSeparator);
+            String basePath = statsDirectory + this.taxonomy.replaceAll("/", "-").replaceAll(":", "-").replaceAll(taxonomySeparator, fileSeparator);
             File newDirectories = new File(basePath);
 
             newDirectories.mkdirs();
 
-            String escapedSeqLocus = this.getSeq_locus().replaceAll("/", "|").replaceAll(as,"|");
-            String escapedOrganism = this.getOrganism().replaceAll("/", "|").replaceAll(as,"|");
+            String escapedSeqLocus = this.getSeq_locus().replaceAll("/", "-").replaceAll(":", "-");
+            String escapedOrganism = this.getOrganism().replaceAll("/", "-").replaceAll(":", "-");
 
 //            String filePath = basePath + fileSeparator + this.organism + excelExt;
             String filePath = basePath + fileSeparator + escapedOrganism +"("+escapedSeqLocus+")" + excelExt;
@@ -152,7 +151,8 @@ public class Genom {
             String currentPath = "";
             for(String p : gs.getPath().split("/")){
                 currentPath += "/" + p;
-                GlobalGs.getCurrentGlobalGs().addStats(currentPath, gs);
+                //TODO refaire la fonction genStatGlob
+                //GlobalGs.getCurrentGlobalGs().addStats(currentPath, gs);
             }
 
             try {

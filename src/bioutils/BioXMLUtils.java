@@ -38,6 +38,15 @@ public final class BioXMLUtils {
 	            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 	
 	            res = unmarshaller.unmarshal(source);
+	            
+	            unmarshaller = null;
+	            source = null;
+	            inputSource = null;
+	            xmlReader = null;
+	            reader.close();
+	            spf = null;
+	            jaxbContext = null;
+	            
         	}
         } catch(Exception e){
         	try {
@@ -48,7 +57,6 @@ public final class BioXMLUtils {
 				e1.printStackTrace();
 			}
 //            e.printStackTrace();
-            return res;
         }
 
         return res;

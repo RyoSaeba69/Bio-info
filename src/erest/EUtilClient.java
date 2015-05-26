@@ -293,6 +293,7 @@ public class EUtilClient {
         options.put("id", id);
         String parameters = FETCH_PARAMETER;
         String resturl = EUTIL_API_EFETCH_URL + parameters + options.toBioParameters();
+        options.clear();
         return sendGet(resturl);
     }
 
@@ -317,6 +318,7 @@ public class EUtilClient {
 
         }
 
+        options.clear();
         return allXml;
     }
 
@@ -330,6 +332,8 @@ public class EUtilClient {
                 ElinkResult elr = (ElinkResult) BioXMLUtils.XMLToClass(xml, ElinkResult.class);
                 linkIds.addAll(elr.getAllLinkIds());
             }
+            
+            xmlResults.clear();
         } catch(Exception e) {
             System.out.println("error : " + e);
             e.printStackTrace();
@@ -344,6 +348,7 @@ public class EUtilClient {
         String parameters = FETCH_PARAMETER;
         String resturl = EUTIL_API_EFETCH_URL + parameters + options.toBioParameters();
 
+        options.clear();
         return sendGet(resturl);
     }
 
@@ -354,6 +359,7 @@ public class EUtilClient {
     	try {
     		String xmlResult = this.efetchSeqByIds(ids);
     		genoms = (Genoms) BioXMLUtils.XMLToClass(xmlResult, Genoms.class);
+    		xmlResult = "";
     	} catch(Exception e) {
     		System.out.println("error : " + e);
     		e.printStackTrace();
@@ -430,7 +436,7 @@ public class EUtilClient {
                         genoms.clearGenoms();
                         genoms = null;
                     }
-                    xmlResult = null;
+                    xmlResult = "";
                 }
 
 //                allGenoms.clear();
@@ -493,11 +499,15 @@ public class EUtilClient {
 
             connection.setRequestMethod("GET");
             InputStream xmlresponse = connection.getInputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader((xmlresponse)));
-            String output;
+            
+            InputStreamReader isr = new InputStreamReader(xmlresponse);
+            BufferedReader br = new BufferedReader(isr);
+            
+            String output = "";
             while ((output = br.readLine()) != null) {
             	try {
             		repsonse.append(output);
+            		output = "";
             	} catch (OutOfMemoryError  e) {
             		System.err.println("Erreur dans sendGet ! \n" + e);
             		e.printStackTrace();
@@ -511,7 +521,10 @@ public class EUtilClient {
             	}
             }
             br.close();
+            isr.close();
+            xmlresponse.close();
             br = null;
+            isr = null;
             xmlresponse = null;
         } catch (Exception e) {
             System.out.println("Exception:" + e);
@@ -528,11 +541,9 @@ public class EUtilClient {
             connection.disconnect();
         }
         connection = null;
-        String res = repsonse.toString();
-        repsonse = null;
         System.gc();
         //System.out.println("repsonse.toString(): " + repsonse.toString());
-        return res;
+        return repsonse.toString();
     }
 
     public static void oneSecondDelay() {

@@ -120,7 +120,7 @@ public class GetDataThread extends Thread {
 				//dataController.setSeqRes(this.getUtilClient().efetchGenomsByIds(dataController.getAllIds()));
 				dataController.setAllLinkIds(this.getUtilClient().elinkLinkBySearchIds(dataController.getAllIds()));
 //				dataController.setSeqRes(this.getUtilClient().efetchAllGenomsByIds(dataController.getAllLinkIds()));
-
+				dataController.setAllIds(new Vector<String>());
 
 				System.out.println("Fin de la recuperation des donnees " + this.getResearchName());
 				System.out.println("Debut traitement des donnees " + this.getResearchName());
@@ -135,7 +135,7 @@ public class GetDataThread extends Thread {
 						realGenomSize = dataController.getAllLinkIds().size() - li;
 					}
 
-					Vector<String> subVectors = new Vector(dataController.getAllLinkIds().subList(li, li+realGenomSize));
+					Vector<String> subVectors = new Vector<String>(dataController.getAllLinkIds().subList(li, li+realGenomSize));
 
 					Vector<Genom> allGenoms = this.getUtilClient().efetchAllGenomsByIds(subVectors);
 					for (Genom gTemp : allGenoms) {
@@ -152,8 +152,8 @@ public class GetDataThread extends Thread {
 					subVectors = null;
 					System.gc();
 				}
-
-				GlobalGs.getCurrentGlobalGs().genGLobalExcels();
+				//TODO refaire la fonction genStatGlob
+				//GlobalGs.getCurrentGlobalGs().genGLobalExcels();
 
 				//System.out.println("Test Sequences : " + dataController.getSeqRes().toString());
 			}
