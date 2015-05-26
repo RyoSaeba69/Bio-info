@@ -128,7 +128,7 @@ public class GetDataThread extends Thread {
 				int nbr = 1;
 
 				int computeGenomSize = 50;
-				for(int li = 0; li < dataController.getAllLinkIds().size() && li <= 200;li += computeGenomSize) {
+				for(int li = 0; li < dataController.getAllLinkIds().size();li += computeGenomSize) {
 
 					int realGenomSize = computeGenomSize;
 					if (li + computeGenomSize >= dataController.getAllLinkIds().size()) {
