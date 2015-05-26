@@ -16,7 +16,7 @@ public class TextAreaOutputStream extends OutputStream {
 	   public TextAreaOutputStream(final JTextArea textArea, String title) {
 	      this.textArea = textArea;
 	      this.title = title;
-	      sb.append(title + "> ");
+//	      sb.append(title + "> ");
 	   }
 
 	   @Override

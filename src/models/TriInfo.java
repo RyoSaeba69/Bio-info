@@ -1,9 +1,11 @@
 package models;
 
+import java.io.Serializable;
+
 /**
  * Created by antoine on 4/26/15.
  */
-public class TriInfo {
+public class TriInfo implements Serializable{
 
     private int phCount;
     private double pbCount;

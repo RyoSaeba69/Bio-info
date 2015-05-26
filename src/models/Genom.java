@@ -2,6 +2,7 @@ package models;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
@@ -152,8 +153,10 @@ public class Genom {
             for(String p : gs.getPath().split("/")){
                 currentPath += "/" + p;
                 //TODO refaire la fonction genStatGlob
-                //GlobalGs.getCurrentGlobalGs().addStats(currentPath, gs);
+                GlobalGs.getCurrentGlobalGs().addStats(currentPath, gs);
             }
+
+//            GlobalGs.getCurrentGlobalGs().addStats(gs.getPath(), gs);
 
             try {
                 FileOutputStream newStatFile = new FileOutputStream(filePath);
@@ -204,6 +207,7 @@ public class Genom {
             newDirectories = null;
             newExcelFile = null;
             newGenomDirectory = null;
+            gs = null;
         }
     }
 
@@ -415,4 +419,7 @@ public class Genom {
         workbook.write(excelFile);
         excelFile.close();
     }
+
+
+
 }

@@ -1,6 +1,8 @@
 package models;
 
 import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,43 +11,77 @@ import controllers.FileController;
 /**
  * Created by antoine on 5/15/15.
  */
-public class GlobalGs {
+public class GlobalGs implements Serializable {
 
+    public static String globalName = "global_stats.xls";
     private static GlobalGs instance = null;
+    private String path = null;
 
     public HashMap<String, GenStats> allGs;
 
-    public static GlobalGs getCurrentGlobalGs(){
-        if(instance == null){
+    public static GlobalGs getCurrentGlobalGs() {
+        if (instance == null) {
             instance = new GlobalGs();
         }
 
         return instance;
     }
 
+    public static String getFilePath(String path) {
+        String statsDirectory = FileController.getFichier().getAbsolutePath() + "/";
+        String globalName = "global_stats.data";
+        return statsDirectory + path + globalName;
+    }
+
     public GlobalGs() {
         allGs = new HashMap<String, GenStats>();
     }
 
-    public GenStats getGs(String path){
+    public GenStats getGs(String path) {
         return this.allGs.get(path);
     }
 
-    public void addStats(String path, GenStats gs){
-        if(!this.allGs.containsKey(path)){
-             this.allGs.put(path, GenStats.newEmptyGs());
+    public void addStats(String path, GenStats gs) {
+        GenStats storedGs = null;
+        if (!this.allGs.containsKey(path)) {
+            this.allGs.put(path, GenStats.newEmptyGs());
+            this.allGs.get(path).setPath(path);
+        } else if (this.allGs.get(path) == null) {
+            storedGs = GenStats.deserializeGs(getFilePath(path));
+            this.allGs.put(path, storedGs);
         }
+
 
         this.allGs.get(path).mergeWith(gs);
 
+        // test Serialize
+//        this.allGs.get(path).serializeGs();
+//        this.allGs.put(path, null);
+//        storedGs = null;
+
+//        System.gc();
+
     }
 
-    public void genGLobalExcels (){
-            for(Map.Entry<String, GenStats> values : allGs.entrySet()) {
+    public void serializedAll(){
+        for(Map.Entry<String, GenStats> mValue : this.allGs.entrySet()) {
+            GenStats currentGs = this.allGs.get(mValue.getKey());
+            if(mValue.getValue() != null){
+                currentGs.serializeGs();
+            }
+            this.allGs.put(mValue.getKey(), null);
+            currentGs = null;
+        }
+        System.gc();
+    }
 
-                String statsDirectory = FileController.getFichier().getAbsolutePath() + "/";
-                String globalName = "global_stats.xls";
-                String globalPath = statsDirectory + values.getKey() + "/" + globalName;
+
+    public void genGLobalExcels() {
+        for (Map.Entry<String, GenStats> values : allGs.entrySet()) {
+
+            String statsDirectory = FileController.getFichier().getAbsolutePath() + "/";
+            String globalName = "global_stats.xls";
+            String globalPath = statsDirectory + values.getKey() + "/" + globalName;
 
 //                File globalFile = new File(globalPath);
 //                if(!globalFile.exists()){
@@ -57,12 +93,26 @@ public class GlobalGs {
 //                    }
 //                }
 
-                try {
-                    Genom.genExcelFile(values.getValue(), new FileOutputStream(globalPath));
-                } catch(Exception e){
-                    e.printStackTrace();
-                }
+            try {
+                Genom.genExcelFile(values.getValue(), new FileOutputStream(globalPath));
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+        }
     }
+
+//    public void serializeGs(){
+//        try{
+//
+//            FileOutputStream fout = new FileOutputStream(getFilePath(this.));
+//            ObjectOutputStream oos = new ObjectOutputStream(fout);
+//            oos.writeObject(address);
+//            oos.close();
+//            System.out.println("Done");
+//
+//        }catch(Exception ex){
+//            ex.printStackTrace();
+//        }
+//    }
 
 }

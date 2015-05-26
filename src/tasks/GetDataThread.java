@@ -150,10 +150,11 @@ public class GetDataThread extends Thread {
 					allGenoms.clear();
 					allGenoms = null;
 					subVectors = null;
+					GlobalGs.getCurrentGlobalGs().serializedAll();
 					System.gc();
 				}
 				//TODO refaire la fonction genStatGlob
-				//GlobalGs.getCurrentGlobalGs().genGLobalExcels();
+				GlobalGs.getCurrentGlobalGs().genGLobalExcels();
 
 				//System.out.println("Test Sequences : " + dataController.getSeqRes().toString());
 			}

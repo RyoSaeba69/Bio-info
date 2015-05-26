@@ -1,15 +1,17 @@
 package models;
 
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import com.sun.tools.javac.jvm.Gen;
 import erest.BioHashMap;
 
 /**
  * Created by antoine on 4/21/15.
  */
-public class GenStats {
+public class GenStats implements Serializable{
 
     private String name;
     private String path;
@@ -186,6 +188,7 @@ public class GenStats {
         this.phTrinucleotide.add(newPhTri);
     }
 
+
     public boolean isUsable(){
         return this.phTrinucleotide != null && this.phTrinucleotide.size() > 0;
     }
@@ -249,6 +252,39 @@ public class GenStats {
             for(Vector<HashMap<String, TriInfo>> allHm : gsToMerge.phTrinucleotide){
                 this.addNewPhTrinucleotide(allHm);
             }
+    }
+
+    public void serializeGs(){
+        try{
+
+            FileOutputStream fout = new FileOutputStream(GlobalGs.getFilePath(this.path));
+            ObjectOutputStream oos = new ObjectOutputStream(fout);
+            oos.writeObject(this);
+            oos.close();
+            System.out.println("Done " + GlobalGs.getFilePath(this.path));
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
+    public static GenStats deserializeGs(String filePath){
+
+        GenStats gs;
+
+        try{
+
+            FileInputStream fin = new FileInputStream(filePath);
+            ObjectInputStream ois = new ObjectInputStream(fin);
+            gs = (GenStats) ois.readObject();
+            ois.close();
+
+            return gs;
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+            return null;
+        }
     }
 
 }
