@@ -1,6 +1,7 @@
 package bioutils;
 
 import java.io.StringReader;
+import java.util.HashMap;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -15,14 +16,32 @@ import org.xml.sax.XMLReader;
  */
 public final class BioXMLUtils {
 
+
+    public static HashMap<String, JAXBContext> sinContext = new HashMap<String, JAXBContext>();
+
+    public static JAXBContext getJaxbContext(Class classType){
+
+        if(!sinContext.containsKey(classType.getName())){
+            try {
+                sinContext.put(classType.getName(), JAXBContext.newInstance(classType));
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        return sinContext.get(classType.getName());
+    }
+
     public static Object XMLToClass(String xmlString, @SuppressWarnings("rawtypes") Class classType ){
 
         Object res = null;
 
         try {
         	if(xmlString!=null) {
-	            JAXBContext jaxbContext = JAXBContext.newInstance(classType);
-	
+//	            JAXBContext jaxbContext = JAXBContext.newInstance(classType);
+	            JAXBContext jaxbContext = getJaxbContext(classType);
+
 	            SAXParserFactory spf = SAXParserFactory.newInstance();
 	            spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 	            spf.setFeature("http://xml.org/sax/features/validation", false);
