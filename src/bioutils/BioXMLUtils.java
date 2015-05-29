@@ -4,6 +4,7 @@ import java.io.StringReader;
 import java.util.HashMap;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
@@ -19,7 +20,7 @@ public final class BioXMLUtils {
 
     public static HashMap<String, JAXBContext> sinContext = new HashMap<String, JAXBContext>();
 
-    public static JAXBContext getJaxbContext(Class classType){
+    public static JAXBContext getJaxbContext(@SuppressWarnings("rawtypes") Class classType){
 
         if(!sinContext.containsKey(classType.getName())){
             try {
@@ -67,9 +68,12 @@ public final class BioXMLUtils {
 	            jaxbContext = null;
 	            
         	}
+        } catch(UnmarshalException e) {
+        	System.out.println("Probleme dans la fonction XMLToClass, xml mal formate : \n"+e);
+        	res = null;
         } catch(Exception e){
         	try {
-        		System.out.println("Probleme dans la fonction XMLToClass relance dans 5 secondes : \n"+e);
+        		System.out.println("Probleme dans la fonction XMLToClass, relance dans 5 secondes : \n"+e);
 				Thread.sleep(5000);
 				res = XMLToClass(xmlString, classType);
 			} catch (InterruptedException e1) {

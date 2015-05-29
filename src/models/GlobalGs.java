@@ -42,37 +42,49 @@ public class GlobalGs implements Serializable {
     }
 
     public void addStats(String path, GenStats gs) {
-        GenStats storedGs = null;
-        if (!this.allGs.containsKey(path)) {
-            this.allGs.put(path, GenStats.newEmptyGs());
-            this.allGs.get(path).setPath(path);
-        } else if (this.allGs.get(path) == null) {
-            storedGs = GenStats.deserializeGs(getFilePath(path));
-            this.allGs.put(path, storedGs);
-        }
+    	try {
+	        GenStats storedGs = null;
+	        if (!this.allGs.containsKey(path)) {
+	            this.allGs.put(path, GenStats.newEmptyGs());
+	            this.allGs.get(path).setPath(path);
+	        } else if (this.allGs.get(path) == null) {
+	            storedGs = GenStats.deserializeGs(getFilePath(path));
+	            if(storedGs!=null) {
+	            	this.allGs.put(path, storedGs);
+	            }
+	        }
+	
+	        if(path!=null && gs!=null) {
+	        	this.allGs.get(path).mergeWith(gs);
+	        }
+	        // test Serialize
+	//        this.allGs.get(path).serializeGs();
+	//        this.allGs.put(path, null);
+	//        storedGs = null;
 
-
-        this.allGs.get(path).mergeWith(gs);
-
-        // test Serialize
-//        this.allGs.get(path).serializeGs();
-//        this.allGs.put(path, null);
-//        storedGs = null;
-
-//        System.gc();
+//       	 System.gc();
+    	} catch (Exception e) {
+    		System.out.println("Une erreur est survenue lors de la creation des stats globales, elle a ete ignoree : " + e);
+    		e.printStackTrace();
+    	}
 
     }
 
     public void serializedAll(){
-        for(Map.Entry<String, GenStats> mValue : this.allGs.entrySet()) {
-            GenStats currentGs = this.allGs.get(mValue.getKey());
-            if(mValue.getValue() != null){
-                currentGs.serializeGs();
-            }
-            this.allGs.put(mValue.getKey(), null);
-            currentGs = null;
-        }
-        System.gc();
+    	try {
+	        for(Map.Entry<String, GenStats> mValue : this.allGs.entrySet()) {
+	            GenStats currentGs = this.allGs.get(mValue.getKey());
+	            if(mValue.getValue() != null){
+	                currentGs.serializeGs();
+	            }
+	            this.allGs.put(mValue.getKey(), null);
+	            currentGs = null;
+	        }
+	        System.gc();
+    	} catch(Exception e) {
+    		System.out.println("Une erreur est survenue lors de la creation des stats globales, elle a ete ignoree : " + e);
+    		e.printStackTrace();
+    	}
     }
 
 

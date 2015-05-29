@@ -309,7 +309,7 @@ public class GenStats implements Serializable{
             oos.close();
             System.out.println("Done " + GlobalGs.getFilePath(this.path));
 
-        }catch(Exception ex){
+        } catch(Exception ex) {
             ex.printStackTrace();
         }
     }
@@ -327,7 +327,7 @@ public class GenStats implements Serializable{
 
             return gs;
 
-        }catch(Exception ex){
+        } catch(Exception ex) {
             ex.printStackTrace();
             return null;
         }

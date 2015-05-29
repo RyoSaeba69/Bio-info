@@ -7,11 +7,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -56,7 +56,8 @@ public class EUtilClient {
         String parameters = CONST_PARAMETERS + term;
         String resturl = EUTIL_API_EFETCH_URL + parameters;
         System.out.println("url: " + resturl);
-        Document doc = parseDOM(sendGet(resturl));
+        String get = sendGet(resturl);
+        Document doc = parseDOM(get);
 
 
         NodeList docSumList = doc.getElementsByTagName("GBReference");
@@ -314,7 +315,9 @@ public class EUtilClient {
             options.put("id", StringUtils.join(ids.subList(i, i+realSearchSize), ","));
 
             String resturl = EUTIL_API_ELINK_URL /*+ parameters*/ + options.toBioParameters();
-            allXml.add(sendGet(resturl));
+            String xml = sendGet(resturl);
+            if(xml!=null)
+            	allXml.add(xml);
 
         }
 
@@ -394,7 +397,9 @@ public class EUtilClient {
                     String parameters = FETCH_PARAMETER;
                     String resturl = EUTIL_API_EFETCH_URL + parameters + options.toBioParameters();
                     //System.out.println("En attente d'une reponse serveur de la requete :\n " + resturl);
-                    allXml.add(sendGet(resturl));
+                    String xml = sendGet(resturl);
+                    if(xml!=null)
+                    	allXml.add(xml);
                 }
 	            i += fetchSize;
 	        }
@@ -431,7 +436,7 @@ public class EUtilClient {
 //                subVectors = null;
                 for(String xmlResult : allXml) {
                     genoms = (Genoms) BioXMLUtils.XMLToClass(xmlResult, Genoms.class);
-                    if(genoms != null){
+                    if(genoms != null && genoms.getAllGenoms()!=null){
                         allGenoms.addAll(genoms.getAllGenoms());
                         genoms.clearGenoms();
                         genoms = null;
@@ -472,6 +477,7 @@ public class EUtilClient {
     }
 
     public static String sendGet(String uri) {
+    	int TIMEOUT_VALUE = 600000;
         oneSecondDelay();
         System.out.println("getting: " + uri);
         HttpURLConnection connection = null;
@@ -481,25 +487,29 @@ public class EUtilClient {
             url = new URL(uri);
 
         } catch (MalformedURLException e) {
-            System.out.println("MalformedURLException:"+e);
+            System.err.println("MalformedURLException:"+e);
+            System.err.println("Erreur dans sendGet ! \n" + e);
             e.printStackTrace();
             try {
-				Thread.sleep(5000);
+            	System.out.println("Veuillez patienter, relance dans 60 secondes...");
+				Thread.sleep(60000);
+				return null;
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-            sendGet(uri);
         }
         StringBuilder repsonse = new StringBuilder();
         //StringBuffer repsonse = new StringBuffer();
         try {
 
             connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(TIMEOUT_VALUE);
+            connection.setReadTimeout(TIMEOUT_VALUE);
 
             connection.setRequestMethod("GET");
             InputStream xmlresponse = connection.getInputStream();
-            
+            oneSecondDelay();
             InputStreamReader isr = new InputStreamReader(xmlresponse);
             BufferedReader br = new BufferedReader(isr);
             
@@ -512,8 +522,9 @@ public class EUtilClient {
             		System.err.println("Erreur dans sendGet ! \n" + e);
             		e.printStackTrace();
             		try {
-                    	System.out.println("Veuillez patienter, relance dans 5 secondes...");
-        				Thread.sleep(5000);
+                    	System.out.println("Veuillez patienter, relance dans 60 secondes...");
+        				Thread.sleep(60000);
+        				return sendGet(uri);
         			} catch (InterruptedException e1) {
         				// TODO Auto-generated catch block
         				e1.printStackTrace();
@@ -526,17 +537,20 @@ public class EUtilClient {
             br = null;
             isr = null;
             xmlresponse = null;
+        } catch (SocketTimeoutException e) {
+            System.out.println("Aucune reponse du serveur depuis 10 minutes. Relance de la demande.");
+            return sendGet(uri);
         } catch (Exception e) {
-            System.out.println("Exception:" + e);
+        	System.err.println("Erreur dans sendGet ! \n" + e);
             e.printStackTrace();
             try {
-            	System.out.println("Veuillez patienter, relance dans 5 secondes...");
-				Thread.sleep(5000);
+            	System.out.println("Veuillez patienter, relance dans 60 secondes...");
+				Thread.sleep(60000);
+				return sendGet(uri);
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-            sendGet(uri);
         } finally {
             connection.disconnect();
         }
@@ -548,7 +562,8 @@ public class EUtilClient {
 
     public static void oneSecondDelay() {
         try {
-            TimeUnit.SECONDS.sleep(1);
+            //TimeUnit.SECONDS.sleep(1);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

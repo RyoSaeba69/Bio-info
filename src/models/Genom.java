@@ -271,42 +271,45 @@ public class Genom {
         resStats.setNbCds(allCds.size());
 
         for(Feature cds : allCds){
-
-            if(!cds.isUsableCds(seq.getSequence().length())){
-                unUsedCds++;
-            } else {
-                String usedSeq = seq.applyFeatures(cds);
-
-                if(Sequence.isValid(usedSeq)) {
-                    resStats.addSeq(usedSeq);
-                    // there is 3 phases
-                    Vector<HashMap<String, TriInfo>> allPhases = new Vector<HashMap<String, TriInfo>>();
-                    for(int p = 0; p < 3;p++) {
-                        HashMap<String, TriInfo> hmRes = this.genCountTri(p, usedSeq);
-
-                        switch (p){
-                            case 0:
-                                resStats.setPh0Trinucleotide(hmRes);
-                                resStats.setPh0Total((usedSeq.length() / 3));
-                                break;
-                            case 1:
-                                resStats.setPh1Trinucleotide(hmRes);
-                                resStats.setPh1Total((usedSeq.length() / 3));
-                                break;
-                            case 2:
-                                resStats.setPh2Trinucleotide(hmRes);
-                                resStats.setPh2Total((usedSeq.length() / 3));
-                                break;
-                        }
-
-                        allPhases.add(hmRes);
-                    }
-                    resStats.addNewPhTrinucleotide(allPhases);
-
-                } else {
-                    unUsedCds++;
-                }
-            }
+        	if(cds!=null && seq!=null && seq.getSequence()!=null) {
+	            if(!cds.isUsableCds(seq.getSequence().length())){
+	                unUsedCds++;
+	            } else {
+	                String usedSeq = seq.applyFeatures(cds);
+	
+	                if(Sequence.isValid(usedSeq)) {
+	                    resStats.addSeq(usedSeq);
+	                    // there is 3 phases
+	                    Vector<HashMap<String, TriInfo>> allPhases = new Vector<HashMap<String, TriInfo>>();
+	                    for(int p = 0; p < 3;p++) {
+	                        HashMap<String, TriInfo> hmRes = this.genCountTri(p, usedSeq);
+	
+	                        switch (p){
+	                            case 0:
+	                                resStats.setPh0Trinucleotide(hmRes);
+	                                resStats.setPh0Total((usedSeq.length() / 3));
+	                                break;
+	                            case 1:
+	                                resStats.setPh1Trinucleotide(hmRes);
+	                                resStats.setPh1Total((usedSeq.length() / 3));
+	                                break;
+	                            case 2:
+	                                resStats.setPh2Trinucleotide(hmRes);
+	                                resStats.setPh2Total((usedSeq.length() / 3));
+	                                break;
+	                        }
+	
+	                        allPhases.add(hmRes);
+	                    }
+	                    resStats.addNewPhTrinucleotide(allPhases);
+	
+	                } else {
+	                    unUsedCds++;
+	                }
+	            }
+        	} else {
+        		unUsedCds++;
+        	}
         }
 
         resStats.setUnUsedCds(unUsedCds);
